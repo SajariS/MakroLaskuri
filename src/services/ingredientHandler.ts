@@ -52,6 +52,7 @@ export const ingredientHandler = {
             ingredient.id === updatedIngredient.id ? updatedIngredient : ingredient
         )
         saveIngredients(updatedIngredients)
+        return
     },
 
     async delete(id: string): Promise<void> {
