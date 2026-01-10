@@ -38,5 +38,25 @@ export const ingredientHandler = {
 
     async getById(id: string): Promise<Ingredient | undefined> {
         return loadIngredients().find((ingredient) => ingredient.id === id)
-    }
+    },
+
+    async add(ingredient: Ingredient): Promise<void> {
+        const ingredients = loadIngredients()
+        saveIngredients([...ingredients, ingredient])
+        return
+    },
+
+    async update(updatedIngredient: Ingredient): Promise<void> {
+        const ingredients = loadIngredients()
+        const updatedIngredients = ingredients.map((ingredient) => 
+            ingredient.id === updatedIngredient.id ? updatedIngredient : ingredient
+        )
+        saveIngredients(updatedIngredients)
+    },
+
+    async delete(id: string): Promise<void> {
+        const ingredients = loadIngredients()
+        saveIngredients(ingredients.filter((ingredient) => ingredient.id !== id))
+        return
+    },
 }
