@@ -20,6 +20,7 @@ const saveDrinks = (drinks: Drink []) => {
     localStorage.setItem(DRINK_KEY, JSON.stringify(drinks))
 }
 
+
 export const drinkHandler = {
 
     createDefault(): Drink {
@@ -34,8 +35,20 @@ export const drinkHandler = {
             sugar: 0,
             protein: 0,
             salt: 0,
-            volumeInLitres: 0
+            volumeInl: 0
         })
+    },
+
+    isDrink(obj: unknown): obj is Drink {
+        if (typeof obj !== "object" || obj === null) return false
+
+        const referenceKeys = Object.keys(this.createDefault()).sort()
+        const objKeys = Object.keys(obj).sort()
+
+        return(
+            referenceKeys.length === objKeys.length &&
+            referenceKeys.every((key, i) => key === objKeys[i])
+        )
     },
 
     async getAll(): Promise<Drink[]> {

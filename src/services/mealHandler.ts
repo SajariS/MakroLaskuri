@@ -38,6 +38,18 @@ export const mealHandler = {
         })
     },
 
+    isMeal(obj: unknown): obj is Meal {
+        if (typeof obj !== "object" || obj === null) return false
+
+        const referenceKeys = Object.keys(this.createDefault()).sort()
+        const objKeys = Object.keys(obj).sort()
+
+        return(
+            referenceKeys.length === objKeys.length &&
+            referenceKeys.every((key, i) => key === objKeys[i])
+        )
+    },
+
     async getAll(): Promise<Meal[]> {
         return loadMeals()
     },

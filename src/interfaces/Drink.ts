@@ -11,5 +11,5 @@ export interface Drink {
     sugar: number
     protein: number
     salt: number
-    volumeInLitres: number
+    volumeInl: number
 }
