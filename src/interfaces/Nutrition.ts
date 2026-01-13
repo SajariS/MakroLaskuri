@@ -3,7 +3,9 @@
 export interface Macros {
     protein: number
     carbs: number
+    sugar: number
     fat: number
-    kiloCalories: number
-    sodium: number
+    hardFat: number
+    kcal: number
+    salt: number
 }

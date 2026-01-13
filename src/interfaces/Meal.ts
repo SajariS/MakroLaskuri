@@ -1,10 +1,10 @@
+import type { Macros } from "./Nutrition"
 
 //Snacks and ready meals, macros per 100g
 export interface Meal {
     id: string
     name: string
     kcal: number
-    kcalSum: number
     weightInGrams: number
     fat: number
     hardFat: number
@@ -12,4 +12,5 @@ export interface Meal {
     sugar: number
     protein: number
     salt: number
+    totalMacros: Macros | null
 }

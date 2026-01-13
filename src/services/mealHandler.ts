@@ -27,7 +27,6 @@ export const mealHandler = {
             id: nanoid(),
             name: '',
             kcal: 0,
-            kcalSum: 0,
             weightInGrams: 0,
             fat: 0,
             hardFat: 0,
@@ -35,6 +34,7 @@ export const mealHandler = {
             sugar: 0,
             protein: 0,
             salt: 0,
+            totalMacros: null
         })
     },
 

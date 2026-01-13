@@ -1,10 +1,10 @@
+import type { Macros } from "./Nutrition"
 
 // Macros per 100ml
 export interface Drink {
     id: string
     name: string
     kcal: number
-    kcalSum: number
     fat: number
     hardFat: number
     carbs: number
@@ -12,4 +12,5 @@ export interface Drink {
     protein: number
     salt: number
     volumeInl: number
+    totalMacros: Macros | null
 }

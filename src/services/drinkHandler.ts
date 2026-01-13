@@ -28,14 +28,14 @@ export const drinkHandler = {
             id: nanoid(),
             name: '',
             kcal: 0,
-            kcalSum: 0,
             fat: 0,
             hardFat: 0,
             carbs: 0,
             sugar: 0,
             protein: 0,
             salt: 0,
-            volumeInl: 0
+            volumeInl: 0,
+            totalMacros: null
         })
     },
 
