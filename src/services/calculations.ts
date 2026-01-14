@@ -2,7 +2,6 @@ import type { Drink } from "../interfaces/Drink";
 import type { Meal } from "../interfaces/Meal";
 import type { Macros } from "../interfaces/Nutrition";
 import { drinkHandler } from "./drinkHandler";
-import { mealHandler } from "./mealHandler";
 
 
 export function macroSum(foodObj: Meal | Drink): Macros{
