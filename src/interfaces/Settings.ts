@@ -1,6 +1,6 @@
 
 
 export interface Settings {
-    name: string;
-    
+    name: string
+    lang: string
 }

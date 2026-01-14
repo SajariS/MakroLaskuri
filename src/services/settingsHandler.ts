@@ -4,7 +4,8 @@ import type { Settings } from "../interfaces/Settings"
 const SETTINGS_KEY = 'settings'
 
 const defaultSettings: Settings = {
-    name: ''
+    name: '',
+    lang: 'fi'
 }
 
 export async function getSettings(): Promise<Settings> {
@@ -26,4 +27,8 @@ export async function setSettings(settings: Settings): Promise<void> {
     catch {
         throw new Error('Failed to save to localStorage')
     }
+}
+
+export function createDefaultSettings(): Settings {
+    return defaultSettings
 }
