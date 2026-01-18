@@ -3,5 +3,17 @@
     
     "common.ok": "OK",
     "common.save": "Tallenna",
-    "common.cancel": "Peru"
+    "common.cancel": "Peru",
+
+    "addItem.name": "Nimi",
+    "addItem.kcal": "Energia (kcal)",
+    "addItem.fat": "Rasva",
+    "addItem.hardFat": "Tyydyttynyt rasva",
+    "addItem.carbs": "Hiilihydraatit",
+    "addItem.sugar": "Sokerit",
+    "addItem.protein": "Proteiini",
+    "addItem.salt": "Suola",
+    "addItem.volumeInl": "Tilavuus (l)",
+    "addItem.weightInGrams": "Paino (g)"
+    
 }

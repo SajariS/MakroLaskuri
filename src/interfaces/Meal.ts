@@ -5,12 +5,12 @@ export interface Meal {
     id: string
     name: string
     kcal: number
-    weightInGrams: number
     fat: number
     hardFat: number
     carbs: number
     sugar: number
     protein: number
     salt: number
+    weightInGrams: number
     totalMacros: Macros | null
 }
