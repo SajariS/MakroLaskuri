@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { getSettings, setSettings } from "../services/settingsHandler";
+import { createDefaultSettings, getSettings, setSettings } from "../services/settingsHandler";
 import { LangContext } from "./LangContext";
 
 type LangProviderProps = { children: ReactNode }
@@ -41,9 +41,17 @@ export default function LangProvider({ children }: LangProviderProps) {
     useEffect(() => {
         const initLang = async() => {
             const settings = await getSettings()
-            const initialLang = settings.lang || "fi"
-            setLang(initialLang)
-            await loadTexts(initialLang)
+            console.log(settings)
+            if (!settings) {
+                const defaultSettings = createDefaultSettings()
+                await setSettings(defaultSettings)
+                setLang(defaultSettings.lang)
+                await loadTexts(defaultSettings.lang)
+            }
+            else {
+                setLang(settings.lang)
+                await loadTexts(settings.lang)
+            }
         }
         initLang()
     }, [])

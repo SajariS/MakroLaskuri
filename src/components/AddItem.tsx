@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { LangContext } from "../context/LangContext";
 import { mealHandler } from "../services/mealHandler";
 import { drinkHandler } from "../services/drinkHandler";
-import { Container, TextField } from "@mui/material";
+import { Button, ButtonGroup, Container, TextField } from "@mui/material";
 import type { Drink } from "../interfaces/Drink";
 import type { Meal } from "../interfaces/Meal";
 
@@ -11,6 +11,8 @@ export default function AddItem() {
     const t = (key: string) => texts?.[key ?? key]
     const defaultMeal = mealHandler.createDefault()
     const [newItem, setNewitem] = useState<Meal | Drink>(defaultMeal)
+    // true = meal, false = drink
+    const [itemSwitch, setItemSwitch] = useState<boolean>(true)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewitem({...newItem, [e.target.name]: e.target.value})
@@ -22,17 +24,33 @@ export default function AddItem() {
         if (mealHandler.isMeal(newItem)) {
             const { weightInGrams: _, ...transItem } = newItem
             setNewitem({...transItem, volumeInl: 0} as Drink)
+            setItemSwitch(!itemSwitch)
         }
         else {
             const {volumeInl: _, ...transItem} = newItem
             setNewitem({...transItem, weightInGrams: 0} as Meal)
+            setItemSwitch(!itemSwitch)
         }
+    }
+
+    const handleSave = () => {
+        mealHandler.isMeal(newItem) ? mealHandler.add(newItem) : drinkHandler.add(newItem)
+        .then(() => console.log("Todo navi ym."))
+        .catch((err) => console.log(err))
     }
 
     if (!texts) return <p>Loading...</p>
 
     return (
         <Container>
+            <ButtonGroup variant="contained">
+                <Button disabled={!itemSwitch} onClick={handleTypeChange}>
+                    TODO! Juoma
+                </Button>
+                <Button disabled={itemSwitch} onClick={handleTypeChange}>
+                    TODO! Ruoka
+                </Button>
+            </ButtonGroup>
             <TextField
                 name="name"
                 value={newItem.name}
@@ -96,6 +114,14 @@ export default function AddItem() {
                 onChange={handleChange}
             />
             }
+            <ButtonGroup variant="contained">
+                <Button onClick={handleSave} color="success">
+                    {t("common.save")}
+                </Button>
+                <Button onClick={() => console.log(newItem)} color="error">
+                    {t("common.cancel")}
+                </Button>
+            </ButtonGroup>
 
         </Container>
     )
