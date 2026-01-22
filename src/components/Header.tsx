@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function Header() {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+    const [naviState, setNaviState] = useState< 'front' | 'mid' | 'back'>("front") 
 
     const handleOpenLangMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(e.currentTarget)
@@ -15,15 +16,16 @@ export default function Header() {
         setAnchorEl(null)
     }
 
+
     return(
         <AppBar position="static">
             <Toolbar>
                 <Box sx={{ flex: 1}} />
 
                 <Box sx={{ display: 'flex', gap: 2}}>
-                    <Button>TODO! Navi Front</Button>
-                    <Button>TODO! NAvi 2</Button>
-                    <Button>TODO! Navi 3</Button>
+                    <Button disabled={naviState === "front"} >TODO! Navi Front</Button>
+                    <Button disabled={naviState === "mid"}>TODO! NAvi 2</Button>
+                    <Button disabled={naviState === "back"} >TODO! Navi 3</Button>
                 </Box>
 
                 <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end'}}>
