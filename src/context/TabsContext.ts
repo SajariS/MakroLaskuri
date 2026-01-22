@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 
 //Lisää tabejä uusien sivujen mukaan, järjestyksellä ei väliä
-type TabId = 'dayPlanner' | 'testi'
+export type TabId = 'dayPlanner' | 'testi'
 
 type TabsContextType = {
     tab: TabId

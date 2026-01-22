@@ -1,14 +1,15 @@
 import { useState, type ReactNode } from "react";
-import { TabsContext } from "./TabsContext";
+import { TabsContext, type TabId } from "./TabsContext";
 
-//Lisää tabejä uusien sivujen mukaan, järjestyksellä ei väliä
-type TabId = 'dayPlanner' | 'testi'
+const TABS_KEY = 'tabs'
 
 type TabsProviderProps = { children: ReactNode}
 
 export default function TabsProvider({ children }: TabsProviderProps) {
 
-    const [tab, setTab] = useState<TabId>("dayPlanner")
+    const [tab, setTab] = useState<TabId>(() => {
+        return (localStorage.getItem(TABS_KEY) as TabId) ?? 'dayPlanner'
+    })
 
     return(
         <TabsContext.Provider value={{ tab, setTab }}>
