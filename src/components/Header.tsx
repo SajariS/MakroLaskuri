@@ -30,8 +30,8 @@ export default function Header() {
 
                 <Toolbar sx={{ display: 'flex', gap: 2}}>
                     <Tabs value={tab} onChange={(_, value) => handleTabChange(value)}>
-                        <Tab label="Home TODO!" value="dayPlanner" />
-                        <Tab label="Tab testi TODO!" value="testi" />
+                        <Tab label="Home TODO!" value="DayPlanner" />
+                        <Tab label="Tab testi TODO!" value="Testi" />
                     </Tabs>
                 </Toolbar>
 

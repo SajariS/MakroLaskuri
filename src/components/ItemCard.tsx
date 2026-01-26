@@ -7,18 +7,22 @@ import { Box, Card, Typography } from "@mui/material"
 import CardFace from "./CardFace"
 import CardHeaderBar from "./CardHeaderBar"
 import { useTheme } from "@mui/material/styles"
+import { nanoid } from "nanoid/non-secure"
 
 type itemCardProps = {
     item: Drink | Meal
+    listId: string | undefined
 }
 
-export default function ItemCard({ item }: itemCardProps) {
+export default function ItemCard({ item, listId }: itemCardProps) {
     const [flipped, setFlipped] = useState<boolean>(false)
 
     const theme = useTheme()
     const cardRadius = theme.shape.borderRadius
     const cardShadow = 3
 
+    // sortablelle oma ID, jotta jokaisella komponentilla on oma uniikki ID drag tunnistusta varten
+    // Käyttää non-secure nanoid performanssin takia, id:n ei tartte olla kuin uniikki
     const {
         setNodeRef,
         attributes,
@@ -26,9 +30,10 @@ export default function ItemCard({ item }: itemCardProps) {
         transform,
         isDragging
     } = useSortable({
-        id: item.id, 
+        id: nanoid(), 
         data: {
             type: 'item',
+            originId: listId,
             item
          }})
 

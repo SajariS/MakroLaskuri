@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useTabs, type TabId } from "../context/TabsContext";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { AnimatePresence, motion } from "motion/react";
+import DayPlanner from "./DayPlanner";
+import { Testi } from "./Testi";
 
 type pageByTabType = { tab: TabId }
 
-const tabOrder: TabId[] = ['dayPlanner', 'testi']
+const tabOrder: TabId[] = ['DayPlanner', 'Testi']
 
 function usePrevious<T>(value: T): T | undefined {
     const ref = useRef<T | undefined>(undefined)
@@ -31,7 +33,7 @@ export default function PageContainer() {
         center: {
             x: 0,
             opacity: 1,
-            postion: 'relative'
+            position: 'relative'
         },
         exit: (direction: number) => ({
             x: direction > 0 ? '-100%': '100%',
@@ -43,11 +45,12 @@ export default function PageContainer() {
     // Lisää sivu komponentit tänne renderöintiä varten
     const PageByTab = ({ tab }: pageByTabType) => {
         switch (tab) {
-            case 'dayPlanner':
-                return //TODO SIVU
-            case 'testi':
-                return //TODO SIVU
+            case 'DayPlanner':
+                return <DayPlanner />
+            case 'Testi':
+                return <Testi />
             default:
+                console.log("Default case TESTI")
                 return null
         }
     }
@@ -65,6 +68,7 @@ export default function PageContainer() {
                     transition={{ duration: 0.35, ease: 'easeInOut'}}
                 >
                     <PageByTab tab={tab} />
+                    <Typography>TEsti</Typography>
                 </motion.div>
             </AnimatePresence>
         </Box>

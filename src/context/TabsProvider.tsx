@@ -8,7 +8,7 @@ type TabsProviderProps = { children: ReactNode}
 export default function TabsProvider({ children }: TabsProviderProps) {
 
     const [tab, setTab] = useState<TabId>(() => {
-        return (localStorage.getItem(TABS_KEY) as TabId) ?? 'dayPlanner'
+        return (localStorage.getItem(TABS_KEY) as TabId) ?? 'DayPlanner'
     })
 
     return(
