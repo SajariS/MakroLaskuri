@@ -1,11 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import './DayPlanner.css'
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mealHandler } from "../services/mealHandler";
 import { drinkHandler } from "../services/drinkHandler";
 import { sortList, type FoodItem } from "../services/sortList";
 import ItemSourceList from "../components/ItemSourceList";
-import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
+import { DndContext, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
 
 const LIST_IDS = {
     SOURCE: 'source',
@@ -16,6 +16,8 @@ export default function DayPlanner() {
     const [sourceList, setSourceList] = useState<FoodItem[]>([])
     const [malleableList, setMalleableList] = useState<FoodItem[]>([])
     const [dragSource, setDragSource] = useState<string | null>(null)
+    const sourceRef = useRef<HTMLDivElement | null>(null)
+    const targetRef = useRef<HTMLDivElement | null>(null)
     
     //Sijainen toisen listan komponentin tulevalle tila_listalle, joka luultavasti on Day.meals[]
     //Käytössä vain funktioiden tekoa varten, ei testausta. Korvaa targetList -> lopullisella koodista
@@ -35,7 +37,7 @@ export default function DayPlanner() {
 
     const handleDragEnd = (e: DragEndEvent) => {
         const { active, over } = e
-        if (!over) return
+        if (!over || !targetRef || !sourceRef) return
         const targetId = over.id
         const targetType = over.data.current?.type
 
@@ -47,10 +49,29 @@ export default function DayPlanner() {
                 return
             }
             else if (targetId === dragSource && targetId === LIST_IDS.SOURCE) {
-                // Sort tapahtuma jos over = lista,
-                // Vaikea sortata ilman lisäkontekstia oletettavasti tapahtuu jos dragend ylä tai ala päässä
-                // TODO selvitä mitä tehdään tarkemmin
-                return
+                // Sort tapahtuma jos over = lista ja lista on source
+                // Käyttää useRef päättelemään onko dragend over elementin ylä vai alapäässä
+                // tämän perusteella aktiivinen drag olio siirretään joko listan ylä tai alapäähän
+
+                const activeIndex = malleableList.findIndex(item => item.id === active.data.current?.id)
+                let newIndex: number | null = null
+
+                const rect = sourceRef.current?.getBoundingClientRect()
+                const y = (e.activatorEvent as MouseEvent).clientY
+                
+                if (rect && y < rect.top) {
+                    newIndex = 0
+                }
+                else if (rect && y > rect.bottom) {
+                    newIndex = malleableList.length - 1
+                }
+
+                if (newIndex === null || activeIndex === newIndex) return
+
+                const next = [...malleableList]
+                const [moved] = next.splice(activeIndex, 1)
+                next.splice(newIndex, 0, moved)
+                setMalleableList(next)
             }
         }
         else if (targetType === "item") {
@@ -85,19 +106,28 @@ export default function DayPlanner() {
     
 
     return(
-        <Box className="pageRoot">
-            <Box className="columns">
-                <Box className="column">
-                    <Typography>TODO! Vastaanotto lista päivälle</Typography>
-                </Box>
-                <Box className="column center">
-                    <Typography>TODO! Laskuri</Typography>
-                </Box>
-                <Box className="column">
-                    <Typography>TODO! Lista kaikista muistin olioista + nappi lisäykseen</Typography>
-                    <ItemSourceList listId={LIST_IDS.SOURCE} sourceList={sourceList} malleableList={malleableList} setSourceList={setSourceList} setMalleableList={setMalleableList} />
+        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <Box className="pageRoot">
+                <Box className="columns">
+                    <Box className="column">
+                        <Typography>TODO! Vastaanotto lista päivälle</Typography>
+                    </Box>
+                    <Box className="column center">
+                        <Typography>TODO! Laskuri</Typography>
+                    </Box>
+                    <Box className="column">
+                        <Typography>TODO! Lista kaikista muistin olioista + nappi lisäykseen</Typography>
+                        <ItemSourceList 
+                        listId={LIST_IDS.SOURCE} 
+                        sourceList={sourceList} 
+                        malleableList={malleableList} 
+                        setSourceList={setSourceList} 
+                        setMalleableList={setMalleableList} 
+                        listRef={sourceRef}
+                        />
+                    </Box>
                 </Box>
             </Box>
-        </Box>
+        </DndContext>
     )
 }
