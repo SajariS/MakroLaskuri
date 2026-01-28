@@ -5,6 +5,10 @@
     "common.save": "Tallenna",
     "common.cancel": "Peru",
 
+    "sortOptions.name": "nimi",
+    "sortOptions.kcal": "kalorit",
+    "sortOptions.sugar": "sokerit",
+
     "addItem.name": "Nimi",
     "addItem.kcal": "Energia (kcal)",
     "addItem.fat": "Rasva",
