@@ -84,10 +84,18 @@ export default function DayPlanner() {
                 return
             }
             else if (targetOriginId === dragSource && targetOriginId === LIST_IDS.SOURCE) {
-                //TODO
                 // Sort tapahtuma jos over = rivi
                 // Yleisin sorttaukseen ainakin käytössä source listaan, ehkä target.
-                // Hae over rivin indeksi listasta, siirrä active rivin indeksi +/-1 tästä
+                // Hakee over ja active indeksit, over tässä tapauksessa pakko olla useSortable listan rivi/item
+                // poistaa activen ja siirtää sen over indeksin alle, over ja loput siirtyvät +1 index
+                // Ehkä pitää muuttaa, riippuen animaatiosta ja miten "siirtyvät" rivit vaikuttaa käsittelyyn
+
+                const overIndex = malleableList.findIndex(item => item.id === over.data.current?.id)
+                const activeIndex = malleableList.findIndex(item => item.id === active.data.current?.id)
+                const next = [...malleableList]
+                const [moved] = next.splice(activeIndex, 1)
+                next.splice(overIndex, 0 , moved)
+                setMalleableList(next)
             }
         }
         
