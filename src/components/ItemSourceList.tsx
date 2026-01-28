@@ -16,7 +16,7 @@ type ItemSourceListProps = {
     listRef: React.RefObject<HTMLDivElement | null>
 }
 
-type optionsRecord = {
+type optionsType = {
     i18n: string | undefined,
     key: FoodItemKey
 }
@@ -32,7 +32,7 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
     // Eli Jos tila on norm, muuttuja false = seuraava sort on inv ja toggle -> true jne.
     const [sortInversion, setSortInversion] = useState<boolean>(false)
 
-    const sortOptions: optionsRecord[] = [
+    const sortOptions: optionsType[] = [
         {i18n: t("sortOptions.name"), key: "name"}, 
         {i18n: t("sortOptions.kcal"), key: "kcal"}, 
         {i18n: t("sortOptions.sugar"), key: "sugar"}
