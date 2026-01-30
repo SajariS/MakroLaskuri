@@ -12,5 +12,5 @@ export interface Meal {
     protein: number
     salt: number
     weightInGrams: number
-    totalMacros: Macros | null
+    totalMacros: Macros
 }
