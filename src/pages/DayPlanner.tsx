@@ -6,6 +6,7 @@ import { drinkHandler } from "../services/drinkHandler";
 import { sortList, type FoodItem } from "../services/sortList";
 import ItemSourceList from "../components/ItemSourceList";
 import { DndContext, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
+import { MacroCalc } from "../components/MacroCalc";
 
 const LIST_IDS = {
     SOURCE: 'source',
@@ -121,7 +122,7 @@ export default function DayPlanner() {
                         <Typography>TODO! Vastaanotto lista päivälle</Typography>
                     </Box>
                     <Box className="column center">
-                        <Typography>TODO! Laskuri</Typography>
+                        <MacroCalc foodItems={targetList} />
                     </Box>
                     <Box className="column">
                         <Typography>TODO! Lista kaikista muistin olioista + nappi lisäykseen</Typography>

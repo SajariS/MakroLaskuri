@@ -12,5 +12,5 @@ export interface Drink {
     protein: number
     salt: number
     volumeInl: number
-    totalMacros: Macros | null
+    totalMacros: Macros
 }
