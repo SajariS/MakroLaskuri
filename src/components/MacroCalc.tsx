@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import type { FoodItem, FoodItemKey } from "../services/sortList";
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import type { Macros } from "../interfaces/Nutrition";
 import { Bar, BarChart, PieChart, Tooltip, XAxis, YAxis, type BarShapeProps } from "recharts";
 import KcalPie from "./KcalPie";
+import { NumberField } from "@base-ui/react/number-field";
+import NumberSpinner from "./NumberSpinner";
 
 type MacroCalcProps = {
     foodItems: FoodItem[]
@@ -45,6 +47,15 @@ export function MacroCalc({ foodItems }: MacroCalcProps) {
             ...item,
             sum: acc[item.key] ?? 0
         })))
+    }
+
+    const handleLimitValueChange = (key: string, value: number | null) => {
+        if (value === null) return
+        const newLimits = limits.map(item => {
+            if (item.key === key) return {...item, limit: value}
+            return item
+        })
+        setLimits(newLimits)
     }
 
     const checkKcalToggle = () => {
@@ -127,7 +138,20 @@ export function MacroCalc({ foodItems }: MacroCalcProps) {
                     </BarChart>
                 </Box>
                 <Box>
-                    <Typography>TODO! Limit toggle box</Typography>
+                    {limits.map(item => (
+                        <Box>
+                            <Typography>{item.key}</Typography>
+                            <Switch></Switch>
+                            {item.toggle && 
+                            <NumberSpinner
+                                label={item.key + ": limit"}
+                                min={0}
+                                size="small"
+                                value={item.limit}
+                                onValueChange={(value) => handleLimitValueChange(item.key, value)}
+                            />}
+                        </Box>
+                    ))}
                 </Box>
 
             </Paper>
