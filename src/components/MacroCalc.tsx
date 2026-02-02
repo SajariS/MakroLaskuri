@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type LinkHTMLAttributes } from "react";
 import type { FoodItem, FoodItemKey } from "../services/sortList";
 import { Box, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import type { Macros } from "../interfaces/Nutrition";
@@ -55,6 +55,11 @@ export function MacroCalc({ foodItems }: MacroCalcProps) {
             if (item.key === key) return {...item, limit: value}
             return item
         })
+        setLimits(newLimits)
+    }
+
+    const handleLimitToggleChange = (key: string) => {
+        const newLimits = limits.map(item => item.key === key ? {...item, toggle: !item.toggle} : item)
         setLimits(newLimits)
     }
 
@@ -141,7 +146,10 @@ export function MacroCalc({ foodItems }: MacroCalcProps) {
                     {limits.map(item => (
                         <Box>
                             <Typography>{item.key}</Typography>
-                            <Switch></Switch>
+                            <Switch
+                                checked={item.toggle}
+                                onChange={() => handleLimitToggleChange(item.key)}
+                            />
                             {item.toggle && 
                             <NumberSpinner
                                 label={item.key + ": limit"}
