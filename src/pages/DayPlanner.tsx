@@ -7,10 +7,17 @@ import { sortList, type FoodItem } from "../services/sortList";
 import ItemSourceList from "../components/ItemSourceList";
 import { DndContext, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
 import { MacroCalc } from "../components/MacroCalc";
+import type { Day } from "../interfaces/Day";
+import ItemTargetList from "../components/ItemTargetList";
+import type { Macros } from "../interfaces/Nutrition";
 
 const LIST_IDS = {
     SOURCE: 'source',
     TARGET: 'target'
+}
+
+type Totals = {
+    [key: string]: number
 }
 
 export default function DayPlanner() {
@@ -20,15 +27,80 @@ export default function DayPlanner() {
     const sourceRef = useRef<HTMLDivElement | null>(null)
     const targetRef = useRef<HTMLDivElement | null>(null)
     
-    //Sijainen toisen listan komponentin tulevalle tila_listalle, joka luultavasti on Day.meals[]
-    //Käytössä vain funktioiden tekoa varten, ei testausta. Korvaa targetList -> lopullisella koodista
-    const [targetList, setTargetList] = useState<FoodItem[]>([])
+    // Tyyppiä pitää muokata tarpeen tulleen ja koko sivun rakennetta muuttaa jos halutaan käyttää Day oliota
+    // Tällä hetkellä käytössä vain lista jota kaikki komponentit käyttää ja laskee itse 
+    // TODO! Selvitä voiko laskennan suorittaa kokonaan target list komponentin alla josta syötetään valmiiksi laskettu,
+    // total keskikomponenttiin esitystä varten.
+    const [day, setDay] = useState<Day>({
+        weekday: 'ma',
+        totalMacros: {
+            protein: 0,
+            carbs: 0,
+            sugar: 0,
+            fat: 0,
+            hardFat: 0,
+            kcal: 0,
+            salt: 0,
+        },
+        macroLimits: {
+            protein: 0,
+            carbs: 0,
+            sugar: 0,
+            fat: 0,
+            hardFat: 0,
+            kcal: 0,
+            salt: 0,
+        },
+        meals: []
+    })
+
+    const handleTotalSum = (items: FoodItem[]): Macros => {
+        const totals = items.reduce((acc, item) => {
+            for (const key in acc) {
+                acc[key as keyof Macros] =+ item.totalMacros[key as keyof Macros]
+            }
+            return acc
+        },
+        {
+            protein: 0,
+            carbs: 0,
+            sugar: 0,
+            fat: 0,
+            hardFat: 0,
+            kcal: 0,
+            salt: 0,
+        } as Macros
+        )
+        return totals
+    }
+
+    const handleTargetAdd = (item: FoodItem | undefined) => {
+        if (!item) return
+        const newMeals = [...day.meals, item]
+        if (newMeals.length === 0) return
+        const newTotals = handleTotalSum(newMeals)
+        setDay({...day, totalMacros: newTotals, meals: newMeals})
+    }
+
+    // Id:n avulla poisto esim. filter ei tuota toivottua tulosta sillä target voi sisältää useamman,
+    // samalla id:llä varustetun alkion.
+    // Kompromissina poistetaan ensimmäisen vastaavuus indeksin perusteella
+    // Tulevaisuudessa pitää katsoa saako drag/sort contextin dragendiin mukaan indeksin suoraan,
+    // jolloin saadaan tarkka poisto listasta eikä vain ensimmäinen vastaavuus.
+    const handleTargetRemove = (item: FoodItem | undefined) => {
+        if (!item) return
+        if (day.meals.length === 0) return
+        const removeIndex = day.meals.findIndex(row => row.id === item.id)
+        const newMeals = day.meals.splice(removeIndex, 1)
+        const newTotal = handleTotalSum(newMeals)
+        setDay({...day, meals: newMeals, totalMacros: newTotal})
+    }
 
     const handleDragStart = (e:DragStartEvent) => {
         const dragData = e.active.data.current
         if (!dragData || dragData.type !== "item") return
 
-        if (targetList.some((item) => item.id === dragData.id)) {
+        if (day.meals.some((item) => item.id === dragData.id)) {
             setDragSource(LIST_IDS.TARGET)
         }
         else {
@@ -46,7 +118,7 @@ export default function DayPlanner() {
             if (targetId !== dragSource && targetId === LIST_IDS.TARGET) {
                 // Copy tapahtuma jos over = lista, 
                 // tarvitsee tulevaisuudessa apufunktion jolla tallennetaan myös localstorageen
-                setTargetList([...targetList, active.data.current?.item])
+                handleTargetAdd(active.data.current?.item)
                 return
             }
             else if (targetId === dragSource && targetId === LIST_IDS.SOURCE) {
@@ -81,7 +153,7 @@ export default function DayPlanner() {
                 // Copy tapahtuma jos over = rivi/itemcard, 
                 // ditto samaan tapahtumaan listan kanssa,
                 // Käytetään jos target lista ei ole tyhjä ja drag päättyy sen rivien päälle.
-                setTargetList([...targetList, active.data.current?.item])
+                handleTargetAdd(active.data.current?.item)
                 return
             }
             else if (targetOriginId === dragSource && targetOriginId === LIST_IDS.SOURCE) {
@@ -120,9 +192,10 @@ export default function DayPlanner() {
                 <Box className="columns">
                     <Box className="column">
                         <Typography>TODO! Vastaanotto lista päivälle</Typography>
+                        <ItemTargetList targetList={day.meals} listId={LIST_IDS.TARGET}/>
                     </Box>
                     <Box className="column center">
-                        <MacroCalc foodItems={targetList} />
+                        <MacroCalc foodItems={day.meals} />
                     </Box>
                     <Box className="column">
                         <Typography>TODO! Lista kaikista muistin olioista + nappi lisäykseen</Typography>
