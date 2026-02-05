@@ -4,11 +4,13 @@ import { Box, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableH
 import type { Macros } from "../interfaces/Nutrition";
 import { Bar, BarChart, PieChart, Tooltip, XAxis, YAxis, type BarShapeProps } from "recharts";
 import KcalPie from "./KcalPie";
-import { NumberField } from "@base-ui/react/number-field";
 import NumberSpinner from "./NumberSpinner";
+import type { Day } from "../interfaces/Day";
 
 type MacroCalcProps = {
-    foodItems: FoodItem[]
+    day: Day
+    handleLimitToggle: (key: string) => void
+    handleLimitChange: (key: keyof Macros, value: number) => void
 }
 
 type LimitsType = {
@@ -22,8 +24,10 @@ type Totals = {
     [key: string]: number
 }
 
-export function MacroCalc({ foodItems }: MacroCalcProps) {
-    const [limits, setLimits] = useState<LimitsType[]>([
+export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCalcProps) {
+
+
+    /*const [limits, setLimits] = useState<LimitsType[]>([
         {toggle: false, key: "protein", limit: 0, sum: 0},
         {toggle: false, key: "carbs", limit: 0, sum: 0}, 
         {toggle: false, key: "sugar", limit: 0, sum: 0},
@@ -31,55 +35,27 @@ export function MacroCalc({ foodItems }: MacroCalcProps) {
         {toggle: false, key: "fat", limit: 0, sum: 0},
         {toggle: false, key: "hardFat", limit: 0, sum: 0},
         {toggle: false, key: "salt", limit: 0, sum: 0},
-    ])
+    ])*/
 
-    const handleSum = () => {
-        const acc: Totals = Object.create(null)
-
-        for (const item of foodItems) {
-            const macros = item.totalMacros
-            for (const key in macros) {
-                acc[key] = (acc[key] ?? 0) + macros[key as keyof Macros]
-            }
+    const checkLimitToggle = (key: string) => {
+        switch (key) {
+            case "protein":
+                return day.proteinLimit
+            case "carbs":
+                return day.carbsLimit
+            case "sugar":
+                return day.sugarLimit
+            case "kcal":
+                return day.kcalLimit
+            case "fat":
+                return day.fatLimit
+            case "hardFat":
+                return day.hardFatLimit
+            case "salt":
+                return day.saltLimit
+            default:
+                return false
         }
-
-        setLimits(limits.map(item => ({
-            ...item,
-            sum: acc[item.key] ?? 0
-        })))
-    }
-
-    const handleLimitValueChange = (key: string, value: number | null) => {
-        if (value === null) return
-        const newLimits = limits.map(item => {
-            if (item.key === key) return {...item, limit: value}
-            return item
-        })
-        setLimits(newLimits)
-    }
-
-    const handleLimitToggleChange = (key: string) => {
-        const newLimits = limits.map(item => item.key === key ? {...item, toggle: !item.toggle} : item)
-        setLimits(newLimits)
-    }
-
-    const checkKcalToggle = () => {
-        const kcalRow = limits.find((row) => row.key === "kcal")
-        if (!kcalRow) return false
-
-        return kcalRow.toggle
-    }
-
-    const handleKcalLimitPrint = () => {
-        const kcalRow = limits.find((row) => row.key === "kcal")
-        if (!kcalRow) return 0
-        return kcalRow.limit
-    }
-
-    const handleKcalSumPrint = () => {
-        const kcalRow = limits.find((row) => row.key === "kcal")
-        if (!kcalRow) return 0
-        return kcalRow.sum
     }
 
     const barRender = (props: BarShapeProps) => {
@@ -114,49 +90,42 @@ export function MacroCalc({ foodItems }: MacroCalcProps) {
         )
     }
 
-    useEffect(() => {
-        if (foodItems.length > 0) handleSum()
-    }, [foodItems])
-
-    //TODO! Siirrä KCAL palkki pois omaan osioon. Tee siitä kond. rend, raja = false, pelkkä numero. 
-    // raja = true, piechart. 1 osa kcal ja toinen osa kond. rend. Jos alle raja = virheä tausta ja title under, yli = punainen tausta ja title over
-
     return (
         <Paper elevation={1}>
             <Paper>
                 <Box>
-                    {checkKcalToggle() ?
-                        <KcalPie sum={handleKcalSumPrint()} limit={handleKcalLimitPrint()}/>
+                    {day.kcalLimit ?
+                        <KcalPie sum={day.totalMacros.kcal} limit={day.macroLimits.kcal}/>
                     :
-                        <Typography>TODO! Iso KCAL teksti: {handleKcalSumPrint()}</Typography>
+                        <Typography>TODO! Iso KCAL teksti: {day.totalMacros.kcal}</Typography>
                     }
                     <BarChart
                         width={500}
                         height={300}
-                        data={limits}
+                        data={Object.entries(day.totalMacros).filter(([key]) => key !== "kcal").map(([key, value]) => ({ key, value }))}
                         margin={{ top: 20, bottom: 20 }}
                     >
                         <XAxis dataKey="key" />
                         <YAxis/>
                         <Tooltip />
-                        <Bar dataKey="sum" shape={barRender} />
+                        <Bar dataKey="value" shape={barRender} />
                     </BarChart>
                 </Box>
                 <Box>
-                    {limits.map(item => (
+                    {Object.entries(day.macroLimits).map(([key, value]) => (
                         <Box>
-                            <Typography>{item.key}</Typography>
+                            <Typography>{key}</Typography>
                             <Switch
-                                checked={item.toggle}
-                                onChange={() => handleLimitToggleChange(item.key)}
+                                checked={checkLimitToggle(key)}
+                                onChange={() => handleLimitToggle(key)}
                             />
-                            {item.toggle && 
+                            {checkLimitToggle(key) && 
                             <NumberSpinner
-                                label={item.key + ": limit"}
+                                label={key + ": limit"}
                                 min={0}
                                 size="small"
-                                value={item.limit}
-                                onValueChange={(value) => handleLimitValueChange(item.key, value)}
+                                value={value}
+                                onValueChange={(value) => handleLimitChange(key as keyof Macros, value ?? 0)}
                             />}
                         </Box>
                     ))}
@@ -178,7 +147,7 @@ export function MacroCalc({ foodItems }: MacroCalcProps) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {foodItems.map((item) => (
+                        {day.meals.map((item) => (
                             <TableRow key={item.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                 <TableCell component="th" scope="row">{item.name}</TableCell>
                                 <TableCell align="right">{item.kcal}</TableCell>

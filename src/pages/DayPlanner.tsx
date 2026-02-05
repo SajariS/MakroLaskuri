@@ -16,10 +16,6 @@ const LIST_IDS = {
     TARGET: 'target'
 }
 
-type Totals = {
-    [key: string]: number
-}
-
 export default function DayPlanner() {
     const [sourceList, setSourceList] = useState<FoodItem[]>([])
     const [malleableList, setMalleableList] = useState<FoodItem[]>([])
@@ -51,7 +47,14 @@ export default function DayPlanner() {
             kcal: 0,
             salt: 0,
         },
-        meals: []
+        meals: [],
+        proteinLimit: false,
+        carbsLimit: false,
+        sugarLimit: false,
+        fatLimit: false,
+        hardFatLimit: false,
+        kcalLimit: false,
+        saltLimit: false
     })
 
     const handleTotalSum = (items: FoodItem[]): Macros => {
@@ -94,6 +97,36 @@ export default function DayPlanner() {
         const newMeals = day.meals.splice(removeIndex, 1)
         const newTotal = handleTotalSum(newMeals)
         setDay({...day, meals: newMeals, totalMacros: newTotal})
+    }
+
+    const handleLimitToggle = (key: string) => {
+        switch (key) {
+            case "protein":
+                setDay({...day, proteinLimit: !day.proteinLimit})
+                break
+            case "carbs":
+                setDay({...day, carbsLimit: !day.carbsLimit})
+                break
+             case "sugar":
+                setDay({...day, sugarLimit: !day.sugarLimit})
+                break
+            case "fat":
+                setDay({...day, fatLimit: !day.fatLimit})
+                break
+            case "hardFat":
+                setDay({...day, hardFatLimit: !day.hardFatLimit})
+                break
+            case "kcal":
+                setDay({...day, kcalLimit: !day.kcalLimit})
+                break
+            case "salt":
+                setDay({...day, saltLimit: !day.saltLimit})
+                break
+        }
+    }
+
+    const handleLimitChange = (key: keyof Macros, value: number) => {
+        setDay({...day, macroLimits: {...day.macroLimits, [key]: value}})
     }
 
     const handleDragStart = (e:DragStartEvent) => {
@@ -195,7 +228,7 @@ export default function DayPlanner() {
                         <ItemTargetList targetList={day.meals} listId={LIST_IDS.TARGET}/>
                     </Box>
                     <Box className="column center">
-                        <MacroCalc foodItems={day.meals} />
+                        <MacroCalc day={day} handleLimitToggle={handleLimitToggle} handleLimitChange={handleLimitChange}/>
                     </Box>
                     <Box className="column">
                         <Typography>TODO! Lista kaikista muistin olioista + nappi lisäykseen</Typography>

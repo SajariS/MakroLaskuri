@@ -10,18 +10,18 @@ type Weekday = "ma" | "ti" | "ke" | "to" | "pe" | "la" | "su"
 type FoodItem = Meal | Drink 
 
 // Describes daily limit, over/under/equal to threshold 
-type ConstraintType = "<" | ">" | "="
+// type ConstraintType = "<" | ">" | "="
 
 export interface Day {
     weekday: Weekday
-    totalMacros: Macros | null
-    macroLimits: Macros | null
+    totalMacros: Macros
+    macroLimits: Macros
     meals: FoodItem[]
-    proteinLimit?: ConstraintType | null
-    carbsLimit?: ConstraintType | null
-    sugarLimit?: ConstraintType | null
-    fatLimit?: ConstraintType | null
-    hardFatLimit?: ConstraintType | null
-    kcalLimit?: ConstraintType | null
-    saltLimit?: ConstraintType | null
+    proteinLimit: boolean
+    carbsLimit: boolean
+    sugarLimit: boolean
+    fatLimit: boolean
+    hardFatLimit: boolean
+    kcalLimit: boolean
+    saltLimit: boolean
 }
