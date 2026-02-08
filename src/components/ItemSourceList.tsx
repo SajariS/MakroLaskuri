@@ -100,10 +100,7 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
         if (!search) {
             setMalleableList(sourceList)
         }
-        const filtered = sourceList?.filter((item) => {
-            item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-        })
-
+        const filtered = sourceList.filter((item) => item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
         setMalleableList(filtered)
     }, [search])
 
