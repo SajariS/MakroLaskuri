@@ -2,11 +2,21 @@ import { useContext, useState } from "react";
 import { LangContext } from "../context/LangContext";
 import { mealHandler } from "../services/mealHandler";
 import { drinkHandler } from "../services/drinkHandler";
-import { Button, ButtonGroup, Container, TextField } from "@mui/material";
+import { Box, Button, ButtonGroup, Container, TextField, Typography } from "@mui/material";
 import type { Drink } from "../interfaces/Drink";
 import type { Meal } from "../interfaces/Meal";
+import NumberSpinner from "./NumberSpinner";
+import type { FoodItem, FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem";
+import { NumberField } from "@base-ui/react";
 
-export default function AddItem() {
+type AddItemProps = {
+    setToggle: (state: boolean) => void
+    handleAdd: (item: FoodItem) => void
+}
+
+const renderKeys = ['kcal', 'fat', 'hardFat', 'carbs', 'sugar', 'protein', 'salt']
+
+export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]
     const defaultMeal = mealHandler.createDefault()
@@ -16,6 +26,10 @@ export default function AddItem() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewitem({...newItem, [e.target.name]: e.target.value})
+    }
+
+    const handleSpinnerChange = (key: FoodItemKey, value: number) => {
+        setNewitem({...newItem, [key]: value})
     }
 
     const handleTypeChange = () => {
@@ -33,10 +47,14 @@ export default function AddItem() {
         }
     }
 
+    // Todo! Lisää totalMacros lasku ennen tallennusta
     const handleSave = () => {
-        mealHandler.isMeal(newItem) ? mealHandler.add(newItem) : drinkHandler.add(newItem)
-        .then(() => console.log("Todo navi ym."))
-        .catch((err) => console.log(err))
+        handleAdd(newItem)
+        setToggle(false)
+    }
+
+    const handleCancel = () => {
+        setToggle(false)
     }
 
     if (!texts) return <p>Loading...</p>
@@ -57,68 +75,42 @@ export default function AddItem() {
                 label={t("addItem.name")}
                 onChange={handleChange}
             />
-            <TextField
-                name="kcal"
-                value={newItem.kcal}
-                label={t("addItem.kcal")}
-                onChange={handleChange}
-            />
-            <TextField
-                name="fat"
-                value={newItem.fat}
-                label={t("addItem.fat")}
-                onChange={handleChange}
-            />
-            <TextField
-                name="hardFat"
-                value={newItem.hardFat}
-                label={t("addItem.hardFat")}
-                onChange={handleChange}
-            />
-            <TextField
-                name="carbs"
-                value={newItem.carbs}
-                label={t("addItem.carbs")}
-                onChange={handleChange}
-            />
-            <TextField
-                name="sugar"
-                value={newItem.sugar}
-                label={t("addItem.sugar")}
-                onChange={handleChange}
-            />
-            <TextField
-                name="protein"
-                value={newItem.protein}
-                label={t("addItem.protein")}
-                onChange={handleChange}
-            />
-            <TextField
-                name="salt"
-                value={newItem.salt}
-                label={t("addItem.salt")}
-                onChange={handleChange}
-            />
+            {Object.entries(newItem).filter(([key]) => renderKeys.includes(key)).map(([key, _value]) => (
+                    <Box>
+                        <Typography>{t(`macros.${key}`)}</Typography>
+                        <NumberSpinner 
+                            name={key}
+                            min={0}
+                            value={newItem[key as FoodItemNumberKey]}
+                            onValueChange={(value) => handleSpinnerChange(key as FoodItemKey, value ?? 0)}
+                        />
+                    </Box>
+            ))}
+
             {mealHandler.isMeal(newItem) ? 
-            <TextField
-                name="weightInGrams"
-                value={newItem.weightInGrams}
-                label={t("addItem.weightInGrams")}
-                onChange={handleChange}
-            />
+            <Box>
+                <Typography>{t("addItem.weightInGrams")}</Typography>
+                <NumberSpinner 
+                    name="weightInGrams"
+                    value={newItem.weightInGrams}
+                    onValueChange={(value) => handleSpinnerChange("weightInGrams" as keyof FoodItem, value ?? 0)}
+                />
+            </Box>
             :
-            <TextField
-                name="volumeInl"
-                value={newItem.volumeInl}
-                label={t("addItem.volumeInl")}
-                onChange={handleChange}
-            />
+            <Box>
+                <Typography>{t("addItem.volumeInl")}</Typography>
+                <NumberSpinner 
+                    name="volumeInl"
+                    value={newItem.volumeInl}
+                    onValueChange={(value) => handleSpinnerChange("volumeInl" as keyof FoodItem, value ?? 0)}
+                />
+            </Box>            
             }
             <ButtonGroup variant="contained">
                 <Button onClick={handleSave} color="success">
                     {t("common.save")}
                 </Button>
-                <Button onClick={() => console.log(newItem)} color="error">
+                <Button onClick={handleCancel} color="error">
                     {t("common.cancel")}
                 </Button>
             </ButtonGroup>

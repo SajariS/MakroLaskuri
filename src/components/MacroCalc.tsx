@@ -1,11 +1,11 @@
 import { useEffect, useState, type LinkHTMLAttributes } from "react";
-import type { FoodItem, FoodItemKey } from "../services/sortList";
 import { Box, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import type { Macros } from "../interfaces/Nutrition";
 import { Bar, BarChart, PieChart, Tooltip, XAxis, YAxis, type BarShapeProps } from "recharts";
 import KcalPie from "./KcalPie";
 import NumberSpinner from "./NumberSpinner";
 import type { Day } from "../interfaces/Day";
+import type { FoodItemKey } from "../interfaces/FoodItem";
 
 type MacroCalcProps = {
     day: Day

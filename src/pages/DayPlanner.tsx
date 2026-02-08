@@ -1,15 +1,17 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Dialog, Typography } from "@mui/material";
 import './DayPlanner.css'
 import { useEffect, useRef, useState } from "react";
 import { mealHandler } from "../services/mealHandler";
 import { drinkHandler } from "../services/drinkHandler";
-import { sortList, type FoodItem } from "../services/sortList";
+import { sortList } from "../services/sortList";
 import ItemSourceList from "../components/ItemSourceList";
 import { DndContext, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
 import { MacroCalc } from "../components/MacroCalc";
 import type { Day } from "../interfaces/Day";
 import ItemTargetList from "../components/ItemTargetList";
 import type { Macros } from "../interfaces/Nutrition";
+import AddItem from "../components/AddItem";
+import type { FoodItem } from "../interfaces/FoodItem";
 
 const LIST_IDS = {
     SOURCE: 'source',
@@ -22,6 +24,7 @@ export default function DayPlanner() {
     const [dragSource, setDragSource] = useState<string | null>(null)
     const sourceRef = useRef<HTMLDivElement | null>(null)
     const targetRef = useRef<HTMLDivElement | null>(null)
+    const [addDialog, setAddDialog] = useState<boolean>(false)
     
     // Tyyppiä pitää muokata tarpeen tulleen ja koko sivun rakennetta muuttaa jos halutaan käyttää Day oliota
     // Tällä hetkellä käytössä vain lista jota kaikki komponentit käyttää ja laskee itse 
@@ -207,6 +210,15 @@ export default function DayPlanner() {
         
     }
 
+    const handleAddItem = (newItem: FoodItem) => {
+        mealHandler.isMeal(newItem) ? mealHandler.add(newItem) : drinkHandler.add(newItem)
+        .then(() => {
+            setSourceList([...sourceList, newItem])
+            setMalleableList([...malleableList, newItem])
+        })
+        .catch((err) => console.error(err))
+    }
+
     useEffect(() => {
         const fetchLists = async() => {
             const mealList = await mealHandler.getAll()
@@ -239,10 +251,20 @@ export default function DayPlanner() {
                         setSourceList={setSourceList} 
                         setMalleableList={setMalleableList} 
                         listRef={sourceRef}
+                        setAddDia={setAddDialog}
                         />
                     </Box>
                 </Box>
             </Box>
+            <Dialog
+                open={addDialog}
+                onClose={() => setAddDialog(false)}
+            >
+                <AddItem 
+                    setToggle={setAddDialog}
+                    handleAdd={handleAddItem}
+                />
+            </Dialog>
         </DndContext>
     )
 }

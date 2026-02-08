@@ -9,6 +9,15 @@
     "sortOptions.kcal": "kalorit",
     "sortOptions.sugar": "sokerit",
 
+    "macros.protein": "Proteiini",
+    "macros.carbs": "Hiilihydraatit",
+    "macros.sugar": "Sokerit",
+    "macros.fat": "Rasva",
+    "macros.hardFat": "Tyydyttynyt Rasva",
+    "macros.kcal": "Energia (kcal)",
+    "macros.salt": "Suola",
+
+
     "addItem.name": "Nimi",
     "addItem.kcal": "Energia (kcal)",
     "addItem.fat": "Rasva",

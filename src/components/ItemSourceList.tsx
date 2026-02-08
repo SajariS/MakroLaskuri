@@ -1,17 +1,19 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Box, Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, TextField } from "@mui/material";
-import { sortList, type FoodItem, type FoodItemKey } from "../services/sortList";
+import { sortList } from "../services/sortList";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import ItemCard from "./ItemCard";
 import { LangContext } from "../context/LangContext";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"
+import type { FoodItem, FoodItemKey } from "../interfaces/FoodItem";
 
 type ItemSourceListProps = {
     sourceList: FoodItem[]
     malleableList: FoodItem[]
     setSourceList: (list: FoodItem[]) => void
     setMalleableList: (list: FoodItem[]) => void
+    setAddDia: (state: boolean) => void
     listId: string
     listRef: React.RefObject<HTMLDivElement | null>
 }
@@ -21,7 +23,7 @@ type optionsType = {
     key: FoodItemKey
 }
 
-export default function ItemSourceList({sourceList, setSourceList, malleableList, setMalleableList, listId, listRef}: ItemSourceListProps) {
+export default function ItemSourceList({sourceList, setSourceList, malleableList, setMalleableList, listId, listRef, setAddDia}: ItemSourceListProps) {
     const [search, setSearch] = useState<string>("")
     const [sortOpen, setSortOpen] = useState<boolean>(false)
     const anchorRef = useRef<HTMLDivElement>(null)
@@ -109,6 +111,10 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
 
     return (
         <Box>
+            <Button
+                size="small"
+                onClick={() => setAddDia(true)}
+            >TODO! Siirrä ja i18n. Lisäys nappi</Button>
             <TextField 
                 value={search}
                 onChange={handleChange}

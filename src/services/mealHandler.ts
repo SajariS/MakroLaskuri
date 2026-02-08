@@ -34,7 +34,15 @@ export const mealHandler = {
             sugar: 0,
             protein: 0,
             salt: 0,
-            totalMacros: null
+            totalMacros: {
+                fat: 0,
+                hardFat: 0,
+                carbs: 0,
+                sugar: 0,
+                protein: 0,
+                salt: 0,
+                kcal: 0,
+            }
         })
     },
 

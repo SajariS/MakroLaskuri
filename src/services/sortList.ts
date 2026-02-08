@@ -1,8 +1,5 @@
-import type { Drink } from "../interfaces/Drink"
-import type { Meal } from "../interfaces/Meal"
+import type { FoodItem, FoodItemKey } from "../interfaces/FoodItem"
 
-export type FoodItem = Meal | Drink
-export type FoodItemKey = keyof FoodItem
 
   //Avain oliosta jolla sortataan ja normaali(true)/käänteinen(false) sort
 export function sortList(list: FoodItem[], key: FoodItemKey, direction: boolean) {

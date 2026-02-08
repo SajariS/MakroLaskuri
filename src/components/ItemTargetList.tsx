@@ -1,7 +1,7 @@
 import { Box } from "@mui/material"
-import type { FoodItem } from "../services/sortList"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import ItemCard from "./ItemCard"
+import type { FoodItem } from "../interfaces/FoodItem"
 
 
 type ItemTargetListProps = {

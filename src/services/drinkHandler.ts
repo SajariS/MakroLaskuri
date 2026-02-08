@@ -35,7 +35,15 @@ export const drinkHandler = {
             protein: 0,
             salt: 0,
             volumeInl: 0,
-            totalMacros: null
+            totalMacros: {
+                fat: 0,
+                hardFat: 0,
+                carbs: 0,
+                sugar: 0,
+                protein: 0,
+                salt: 0,
+                kcal: 0,
+            }
         })
     },
 
