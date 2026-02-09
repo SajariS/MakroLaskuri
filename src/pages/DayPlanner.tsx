@@ -157,8 +157,6 @@ export default function DayPlanner() {
         if (!over || !targetRef || !sourceRef) return
         const targetId = over.id
         const targetType = over.data.current?.type
-
-        if (!over || !targetRef || !sourceRef) return
         if (targetType === "list") {
             if (targetId !== dragSource && targetId === LIST_IDS.TARGET) {
                 // Copy tapahtuma jos over = lista, 
@@ -221,8 +219,9 @@ export default function DayPlanner() {
     }
 
     const handleAddItem = (newItem: FoodItem) => {
-        mealHandler.isMeal(newItem) ? mealHandler.add(newItem) : drinkHandler.add(newItem)
+        (mealHandler.isMeal(newItem) ? mealHandler.add(newItem) : drinkHandler.add(newItem))
         .then(() => {
+            console.log("Lisäys ok")
             setSourceList([...sourceList, newItem])
             setMalleableList([...malleableList, newItem])
         })
