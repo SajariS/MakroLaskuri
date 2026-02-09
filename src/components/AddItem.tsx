@@ -8,6 +8,7 @@ import type { Meal } from "../interfaces/Meal";
 import NumberSpinner from "./NumberSpinner";
 import type { FoodItem, FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem";
 import { NumberField } from "@base-ui/react";
+import { macroSum } from "../services/calculations";
 
 type AddItemProps = {
     setToggle: (state: boolean) => void
@@ -49,7 +50,8 @@ export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
 
     // Todo! Lisää totalMacros lasku ennen tallennusta
     const handleSave = () => {
-        handleAdd(newItem)
+        const macros = macroSum(newItem)
+        handleAdd({...newItem, totalMacros: macros})
         setToggle(false)
     }
 
