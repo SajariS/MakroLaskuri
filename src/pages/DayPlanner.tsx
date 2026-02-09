@@ -240,11 +240,10 @@ export default function DayPlanner() {
         fetchLists()
     }, [])
     
-    const { setNodeRef } = useDroppable({ id: 'page'})
 
     return(
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <Box className="pageRoot" ref={setNodeRef}>
+            <Box className="pageRoot">
                 <Box className="columns">
                     <Box className="column">
                         <Typography>TODO! Vastaanotto lista päivälle</Typography>
