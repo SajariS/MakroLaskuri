@@ -5,13 +5,14 @@ import { mealHandler } from "../services/mealHandler";
 import { drinkHandler } from "../services/drinkHandler";
 import { sortList } from "../services/sortList";
 import ItemSourceList from "../components/ItemSourceList";
-import { DndContext, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
+import { DndContext, DragOverlay, useDroppable, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
 import { MacroCalc } from "../components/MacroCalc";
 import type { Day } from "../interfaces/Day";
 import ItemTargetList from "../components/ItemTargetList";
 import type { Macros } from "../interfaces/Nutrition";
 import AddItem from "../components/AddItem";
 import type { FoodItem } from "../interfaces/FoodItem";
+import DragCard from "../components/DragCard";
 
 const LIST_IDS = {
     SOURCE: 'source',
@@ -25,7 +26,8 @@ export default function DayPlanner() {
     const sourceRef = useRef<HTMLDivElement | null>(null)
     const targetRef = useRef<HTMLDivElement | null>(null)
     const [addDialog, setAddDialog] = useState<boolean>(false)
-    
+    const [dragItem, setDragItem] = useState<FoodItem | null>(null)
+
     // Tyyppiä pitää muokata tarpeen tulleen ja koko sivun rakennetta muuttaa jos halutaan käyttää Day oliota
     // Tällä hetkellä käytössä vain lista jota kaikki komponentit käyttää ja laskee itse 
     // TODO! Selvitä voiko laskennan suorittaa kokonaan target list komponentin alla josta syötetään valmiiksi laskettu,
@@ -134,6 +136,9 @@ export default function DayPlanner() {
 
     const handleDragStart = (e:DragStartEvent) => {
         const dragData = e.active.data.current
+        console.log(dragData?.item)
+        setDragItem(!dragData ? null : dragData.item as FoodItem)
+        // Voi olla turha kohta kokonaan, riippuu miten dnd etenee
         if (!dragData || dragData.type !== "item") return
 
         if (day.meals.some((item) => item.id === dragData.id)) {
@@ -142,14 +147,18 @@ export default function DayPlanner() {
         else {
             setDragSource(LIST_IDS.SOURCE)
         }
+        console.log("Drag start:" + dragData.item.name)
     }
 
     const handleDragEnd = (e: DragEndEvent) => {
+        setDragItem(null)
         const { active, over } = e
+        console.log(`Dragend. active: ${active.id}, target: ${over?.id}`)
         if (!over || !targetRef || !sourceRef) return
         const targetId = over.id
         const targetType = over.data.current?.type
 
+        if (!over || !targetRef || !sourceRef) return
         if (targetType === "list") {
             if (targetId !== dragSource && targetId === LIST_IDS.TARGET) {
                 // Copy tapahtuma jos over = lista, 
@@ -157,6 +166,7 @@ export default function DayPlanner() {
                 handleTargetAdd(active.data.current?.item)
                 return
             }
+            /*
             else if (targetId === dragSource && targetId === LIST_IDS.SOURCE) {
                 // Sort tapahtuma jos over = lista ja lista on source
                 // Käyttää useRef päättelemään onko dragend over elementin ylä vai alapäässä
@@ -181,7 +191,7 @@ export default function DayPlanner() {
                 const [moved] = next.splice(activeIndex, 1)
                 next.splice(newIndex, 0, moved)
                 setMalleableList(next)
-            }
+            } */
         }
         else if (targetType === "item") {
             const targetOriginId = over.data.current?.originId
@@ -191,7 +201,7 @@ export default function DayPlanner() {
                 // Käytetään jos target lista ei ole tyhjä ja drag päättyy sen rivien päälle.
                 handleTargetAdd(active.data.current?.item)
                 return
-            }
+            } /*
             else if (targetOriginId === dragSource && targetOriginId === LIST_IDS.SOURCE) {
                 // Sort tapahtuma jos over = rivi
                 // Yleisin sorttaukseen ainakin käytössä source listaan, ehkä target.
@@ -205,7 +215,7 @@ export default function DayPlanner() {
                 const [moved] = next.splice(activeIndex, 1)
                 next.splice(overIndex, 0 , moved)
                 setMalleableList(next)
-            }
+            } */
         }
         
     }
@@ -230,10 +240,11 @@ export default function DayPlanner() {
         fetchLists()
     }, [])
     
+    const { setNodeRef } = useDroppable({ id: 'page'})
 
     return(
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <Box className="pageRoot">
+            <Box className="pageRoot" ref={setNodeRef}>
                 <Box className="columns">
                     <Box className="column">
                         <Typography>TODO! Vastaanotto lista päivälle</Typography>
@@ -265,6 +276,12 @@ export default function DayPlanner() {
                     handleAdd={handleAddItem}
                 />
             </Dialog>
+            <DragOverlay>
+                {dragItem ?
+                    <DragCard item={dragItem} />
+                    : null
+                }
+            </DragOverlay>
         </DndContext>
     )
 }

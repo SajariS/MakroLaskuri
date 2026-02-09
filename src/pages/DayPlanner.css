@@ -19,7 +19,7 @@
   border: 1px solid var(--mui-palette-divider, #e0e0e0);
   border-radius: 8px;
   padding: 8px;
-  overflow: hidden;
+  /*overflow: hidden; */
   background-color: var(--mui-palette-background-paper, #fff);
 }
 
@@ -38,7 +38,7 @@
 /* Scrollattava lista */
 .listContainer {
   flex: 1;
-  overflow-y: auto;
+  /*overflow-y: auto; */
   padding-right: 4px;
 }
 

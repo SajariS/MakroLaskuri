@@ -76,7 +76,7 @@ export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
                 onChange={handleChange}
             />
             {Object.entries(newItem).filter(([key]) => renderKeys.includes(key)).map(([key, _value]) => (
-                    <Box>
+                    <Box key={key}>
                         <Typography>{t(`macros.${key}`)}</Typography>
                         <NumberSpinner 
                             name={key}

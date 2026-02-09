@@ -80,7 +80,7 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
     }
 
     const { setNodeRef } = useDroppable({
-        id: 'listId',
+        id: listId,
         data: {
             type: 'list'
         }
@@ -162,10 +162,10 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
                     </Grow>
                 )}
             </Popper>
-            <Box ref={setRefs}>
+            <Box ref={setNodeRef}>
                 <SortableContext items={malleableList} strategy={verticalListSortingStrategy}>
                     {malleableList.map(item => (
-                        <ItemCard item={item} listId={listId} />
+                        <ItemCard item={item} listId={listId} key={item.id} />
                     ))}
                 </SortableContext>
             </Box>

@@ -113,7 +113,7 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
                 </Box>
                 <Box>
                     {Object.entries(day.macroLimits).map(([key, value]) => (
-                        <Box>
+                        <Box key={key}>
                             <Typography>{key}</Typography>
                             <Switch
                                 checked={checkLimitToggle(key)}
