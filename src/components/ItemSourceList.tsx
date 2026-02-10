@@ -55,7 +55,10 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
             sortOptions[index === undefined ? sortIndex : index].key, 
             inversion === undefined ? sortInversion : inversion
         ) as FoodItem[]
-        setMalleableList(sortedList) 
+        console.log(sortedList)
+        setMalleableList(sortedList)
+        console.log("Manual Inversion: " + inversion)
+        console.log("Sort inversion: " + sortInversion)
 
         if (inversion === undefined) {
             setSortInversion((prev) => !prev)
@@ -162,7 +165,13 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
                     </Grow>
                 )}
             </Popper>
-            <Box ref={setNodeRef}>
+            <Box ref={setNodeRef}
+                sx={{
+                    height: 400,
+                    overflowY: 'auto',
+                    border: '1px solid gray',
+                    padding: 1
+            }}>
                 <SortableContext items={malleableList} strategy={verticalListSortingStrategy}>
                     {malleableList.map(item => (
                         <ItemCard item={item} listId={listId} key={item.id} />
