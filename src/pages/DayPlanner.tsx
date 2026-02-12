@@ -88,6 +88,7 @@ export default function DayPlanner() {
         if (newMeals.length === 0) return
         const newTotals = handleTotalSum(newMeals)
         setDay({...day, totalMacros: newTotals, meals: newMeals})
+        setMalleableList(malleableList.filter(row => row.id !== item.id))
     }
 
     // Id:n avulla poisto esim. filter ei tuota toivottua tulosta sillä target voi sisältää useamman,
@@ -228,13 +229,19 @@ export default function DayPlanner() {
         .catch((err) => console.error(err))
     }
 
+    const handleMalleableList = (newList: FoodItem[]) => {
+        const duplicates = new Set(day.meals.map(item => item.id))
+        const filteredList = newList.filter((item) => !duplicates.has(item.id))
+        setMalleableList(filteredList)
+    }
+
     useEffect(() => {
         const fetchLists = async() => {
             const mealList = await mealHandler.getAll()
             const drinkList = await drinkHandler.getAll()
             const filteredList = sortList([...mealList, ...drinkList], "name", true)
             setSourceList(filteredList as FoodItem[])
-            setMalleableList(filteredList as FoodItem[])
+            handleMalleableList(filteredList as FoodItem[])
         }
         fetchLists()
     }, [])
@@ -258,7 +265,7 @@ export default function DayPlanner() {
                         sourceList={sourceList} 
                         malleableList={malleableList} 
                         setSourceList={setSourceList} 
-                        setMalleableList={setMalleableList} 
+                        setMalleableList={handleMalleableList} 
                         listRef={sourceRef}
                         setAddDia={setAddDialog}
                         />
