@@ -3,10 +3,12 @@ import { useState } from "react"
 import { CSS } from "@dnd-kit/utilities"
 import type { Drink } from "../interfaces/Drink"
 import type { Meal } from "../interfaces/Meal"
-import { Box, Card, Typography } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Box, Card, Collapse, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import CardFace from "./CardFace"
 import CardHeaderBar from "./CardHeaderBar"
 import { useTheme } from "@mui/material/styles"
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import type { FoodItem, FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem"
 
 type itemCardProps = {
     item: Drink | Meal
@@ -14,11 +16,16 @@ type itemCardProps = {
 }
 
 export default function ItemCard({ item, listId }: itemCardProps) {
-    const [flipped, setFlipped] = useState<boolean>(false)
-
-    const theme = useTheme()
-    const cardRadius = theme.shape.borderRadius
-    const cardShadow = 3
+    const [expanded, setExpanded] = useState<boolean>(false)
+    const tableKeys = [
+        "kcal", 
+        "fat", 
+        "hardFat", 
+        "carbs", 
+        "sugar", 
+        "protein", 
+        "salt"
+    ]
 
     const {
         setNodeRef,
@@ -39,13 +46,14 @@ export default function ItemCard({ item, listId }: itemCardProps) {
         <Box 
             ref={setNodeRef}
             sx={{
-                width: 240,
-                height: 160,
+                width: '100%',
                 perspective: '1000px',
                 cursor: 'pointer',
                 transform: CSS.Translate.toString(transform),
                 transition,
-                visibility: isDragging ? 'hidden' : 'visible'
+                visibility: isDragging ? 'hidden' : 'visible',
+                display: 'flex',
+                flexDirection: 'column'
             }}
         >
         
@@ -54,46 +62,65 @@ export default function ItemCard({ item, listId }: itemCardProps) {
                 listeners={listeners}
                 attributes={attributes}
             />
-
+            
             <Box
-                onClick={() => {
-                    if (!isDragging) setFlipped(!flipped)
-                }}
                 sx={{
-                    position: 'relative',
-                    height: 120,
-                    perspective: '1000px',
-                    cursor: 'pointer'
+                    display: 'flex',
+                    alignItems: 'center',
+                    width: '100%'
                 }}
             >
-                <Box
+                <IconButton
+                    size="small"
+                    onClick={() => setExpanded(prev => !prev)}
                     sx={{
-                        position: 'absolute',
-                        inset: 0,
-                        transformStyle: 'preserve-3d',
-                        transition: 'transform 0.6s ease',
-                        transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                        
-                        backgroundColor: 'background.paper',
-                        boxShadow: cardShadow,
-                        border: cardRadius,
-
+                        transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "0.2s"
                     }}
                 >
-                    <CardFace>
-                        <Typography>
-                            Klikkaa tästä :3
-                        </Typography>
-                    </CardFace>
+                    <ExpandMoreIcon />
+                </IconButton>
 
-                    <CardFace back>
-                        <Typography>
-                            Pruuuuuttt
-                        </Typography>
-                    </CardFace>
+                <Box>
+                    <Typography>{`TODO! Kcal esitys: ${item.kcal}`}</Typography>
                 </Box>
-            </Box>
 
+                <Box>
+                    <p>Spinner!</p>
+                </Box>
+            </Box>   
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                <Box
+                    sx={{
+                        mt: 1,
+                        pt: 1,
+                        borderTop: "1px solid",
+                        borderColor: "divider"
+                    }}
+                >
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>i18n todo: Ravintoarvot</TableCell>
+                                    <TableCell>todo cond g-ml, 100g</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {tableKeys.map((key) => (
+                                    <TableRow
+                                        key={key}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell>{`TODO i18n avaimella: ${key}`}</TableCell>
+                                        <TableCell>{item[key as FoodItemNumberKey]}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+            </Collapse> 
         </Box>
     )
 

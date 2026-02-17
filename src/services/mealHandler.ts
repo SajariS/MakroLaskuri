@@ -26,6 +26,7 @@ export const mealHandler = {
         return({
             id: nanoid(),
             name: '',
+            amount: 1,
             kcal: 0,
             weightInGrams: 0,
             fat: 0,

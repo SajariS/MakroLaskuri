@@ -39,7 +39,7 @@ export default function CardHeaderBar({ title, listeners, attributes }: cardHead
             </Box>
 
             <Typography variant="subtitle1" noWrap>
-                {title} Testi!
+                {title}
             </Typography>
         </Box>
     )

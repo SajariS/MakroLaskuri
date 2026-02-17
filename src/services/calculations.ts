@@ -19,3 +19,14 @@ export function macroSum(foodObj: Meal | Drink): Macros{
     })
 
 }
+
+export function macroMultiply(foodObj: Meal | Drink): Macros {
+    const multiplier = foodObj.amount
+    const macros = macroSum(foodObj)
+    
+    for (const key in macros) {
+        macros[key as keyof Macros] = macros[key as keyof Macros] * multiplier
+    }
+
+    return macros
+}

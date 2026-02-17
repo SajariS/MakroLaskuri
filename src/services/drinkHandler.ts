@@ -27,6 +27,7 @@ export const drinkHandler = {
         return ({
             id: nanoid(),
             name: '',
+            amount: 1,
             kcal: 0,
             fat: 0,
             hardFat: 0,
