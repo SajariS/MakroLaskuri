@@ -22,7 +22,6 @@ const LIST_IDS = {
 export default function DayPlanner() {
     const [sourceList, setSourceList] = useState<FoodItem[]>([])
     const [malleableList, setMalleableList] = useState<FoodItem[]>([])
-    const [dragSource, setDragSource] = useState<string | null>(null)
     const sourceRef = useRef<HTMLDivElement | null>(null)
     const targetRef = useRef<HTMLDivElement | null>(null)
     const [addDialog, setAddDialog] = useState<boolean>(false)
@@ -65,7 +64,7 @@ export default function DayPlanner() {
     const handleTotalSum = (items: FoodItem[]): Macros => {
         const totals = items.reduce((acc, item) => {
             for (const key in acc) {
-                acc[key as keyof Macros] =+ item.totalMacros[key as keyof Macros]
+                acc[key as keyof Macros] += item.totalMacros[key as keyof Macros]
             }
             return acc
         },
@@ -89,6 +88,13 @@ export default function DayPlanner() {
         const newTotals = handleTotalSum(newMeals)
         setDay({...day, totalMacros: newTotals, meals: newMeals})
         setMalleableList(malleableList.filter(row => row.id !== item.id))
+    }
+
+    const handleTargetChange = (newList: FoodItem[]) => {
+        const newTotals = handleTotalSum(newList)
+        console.log(newList)
+        console.log(newTotals)
+        setDay({...day, meals: newList, totalMacros: newTotals})
     }
 
     // Id:n avulla poisto esim. filter ei tuota toivottua tulosta sillä target voi sisältää useamman,
@@ -142,13 +148,7 @@ export default function DayPlanner() {
         // Voi olla turha kohta kokonaan, riippuu miten dnd etenee
         if (!dragData || dragData.type !== "item") return
 
-        if (day.meals.some((item) => item.id === dragData.id)) {
-            setDragSource(LIST_IDS.TARGET)
-        }
-        else {
-            setDragSource(LIST_IDS.SOURCE)
-        }
-        console.log("Drag start:" + dragData.item.name)
+        console.log("Drag start:" + dragData.originId)
     }
 
     const handleDragEnd = (e: DragEndEvent) => {
@@ -156,6 +156,7 @@ export default function DayPlanner() {
         const { active, over } = e
         console.log(`Dragend. active: ${active.id}, target: ${over?.id}`)
         if (!over || !targetRef || !sourceRef) return
+        const dragSource = active.data.current?.originId
         const targetId = over.id
         const targetType = over.data.current?.type
         if (targetType === "list") {
@@ -253,7 +254,7 @@ export default function DayPlanner() {
                 <Box className="columns">
                     <Box className="column">
                         <Typography>TODO! Vastaanotto lista päivälle</Typography>
-                        <ItemTargetList targetList={day.meals} listId={LIST_IDS.TARGET}/>
+                        <ItemTargetList targetList={day.meals} listId={LIST_IDS.TARGET} setTargetList={handleTargetChange}/>
                     </Box>
                     <Box className="column center">
                         <MacroCalc day={day} handleLimitToggle={handleLimitToggle} handleLimitChange={handleLimitChange}/>

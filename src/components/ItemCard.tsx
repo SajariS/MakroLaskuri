@@ -1,22 +1,26 @@
 import { useSortable } from "@dnd-kit/sortable"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { CSS } from "@dnd-kit/utilities"
 import type { Drink } from "../interfaces/Drink"
 import type { Meal } from "../interfaces/Meal"
-import { Accordion, AccordionDetails, AccordionSummary, Box, Card, Collapse, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
-import CardFace from "./CardFace"
+import { Box, Collapse, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import CardHeaderBar from "./CardHeaderBar"
-import { useTheme } from "@mui/material/styles"
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import type { FoodItem, FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem"
+import type { FoodItem, FoodItemNumberKey } from "../interfaces/FoodItem"
+import { LangContext } from "../context/LangContext"
+import NumberSpinner from "./NumberSpinner"
 
 type itemCardProps = {
     item: Drink | Meal
     listId: string | undefined
+    handleAmountChange?: (item: FoodItem, amount: number) => void
 }
 
-export default function ItemCard({ item, listId }: itemCardProps) {
+export default function ItemCard({ item, listId, handleAmountChange }: itemCardProps) {
+    const { texts } = useContext(LangContext)
+    const t = (key: string) => texts?.[key ?? key]
     const [expanded, setExpanded] = useState<boolean>(false)
+    const [count, setCount] = useState<number>(1)
     const tableKeys = [
         "kcal", 
         "fat", 
@@ -35,12 +39,18 @@ export default function ItemCard({ item, listId }: itemCardProps) {
         isDragging,
         transition
     } = useSortable({
-        id: item.id, 
+        id: item.id,
         data: {
             type: 'item',
             originId: listId,
-            item
-         }})
+            item: { ...item, amount: count }
+        }
+    })
+         
+    const handleChange = (value: number) => {
+        setCount(value)
+        if (handleAmountChange) handleAmountChange(item, value)
+    }
 
     return(
         <Box 
@@ -82,12 +92,18 @@ export default function ItemCard({ item, listId }: itemCardProps) {
                 </IconButton>
 
                 <Box>
-                    <Typography>{`TODO! Kcal esitys: ${item.kcal}`}</Typography>
+                    <Typography>{`${t("itemCard.kcalSum")} ${listId === "source" ? item.totalMacros.kcal * count : item.totalMacros.kcal}`}</Typography>
                 </Box>
 
                 <Box>
-                    <p>Spinner!</p>
+                    <NumberSpinner 
+                        min={1}
+                        value={count}
+                        onValueChange={(value) => handleChange(value ?? 1)}
+                        size="small"
+                    />
                 </Box>
+                <button onClick={() => console.log(listId)}>DEbug</button>
             </Box>   
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <Box
@@ -112,7 +128,7 @@ export default function ItemCard({ item, listId }: itemCardProps) {
                                         key={key}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell>{`TODO i18n avaimella: ${key}`}</TableCell>
+                                        <TableCell>{t(`macros.${key}`)}</TableCell>
                                         <TableCell>{item[key as FoodItemNumberKey]}</TableCell>
                                     </TableRow>
                                 ))}

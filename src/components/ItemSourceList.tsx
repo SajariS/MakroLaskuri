@@ -167,7 +167,7 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
             </Popper>
             <Box ref={setNodeRef}
                 sx={{
-                    height: 400,
+                    height: 800,
                     overflowY: 'auto',
                     border: '1px solid gray',
                     padding: 1

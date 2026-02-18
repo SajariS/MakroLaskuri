@@ -27,6 +27,8 @@
     "addItem.protein": "Proteiini",
     "addItem.salt": "Suola",
     "addItem.volumeInl": "Tilavuus (l)",
-    "addItem.weightInGrams": "Paino (g)"
+    "addItem.weightInGrams": "Paino (g)",
+
+    "itemCard.kcalSum": "Kcal yhteensä:"
     
 }
