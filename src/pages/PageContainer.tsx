@@ -68,7 +68,6 @@ export default function PageContainer() {
                     transition={{ duration: 0.35, ease: 'easeInOut'}}
                 >
                     <PageByTab tab={tab} />
-                    <Typography>TEsti</Typography>
                 </motion.div>
             </AnimatePresence>
         </Box>

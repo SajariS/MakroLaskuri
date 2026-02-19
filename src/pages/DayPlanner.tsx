@@ -154,7 +154,7 @@ export default function DayPlanner() {
     const handleDragEnd = (e: DragEndEvent) => {
         setDragItem(null)
         const { active, over } = e
-        console.log(`Dragend. active: ${active.id}, target: ${over?.id}`)
+        console.log(`Dragend. active: ${active.id}, target: ${over?.id}, targetType: ${over?.data.current?.type}`)
         if (!over || !targetRef || !sourceRef) return
         const dragSource = active.data.current?.originId
         const targetId = over.id
@@ -201,21 +201,29 @@ export default function DayPlanner() {
                 // Käytetään jos target lista ei ole tyhjä ja drag päättyy sen rivien päälle.
                 handleTargetAdd(active.data.current?.item)
                 return
-            } /*
-            else if (targetOriginId === dragSource && targetOriginId === LIST_IDS.SOURCE) {
-                // Sort tapahtuma jos over = rivi
-                // Yleisin sorttaukseen ainakin käytössä source listaan, ehkä target.
-                // Hakee over ja active indeksit, over tässä tapauksessa pakko olla useSortable listan rivi/item
-                // poistaa activen ja siirtää sen over indeksin alle, over ja loput siirtyvät +1 index
-                // Ehkä pitää muuttaa, riippuen animaatiosta ja miten "siirtyvät" rivit vaikuttaa käsittelyyn
+            }
 
-                const overIndex = malleableList.findIndex(item => item.id === over.data.current?.id)
-                const activeIndex = malleableList.findIndex(item => item.id === active.data.current?.id)
-                const next = [...malleableList]
-                const [moved] = next.splice(activeIndex, 1)
-                next.splice(overIndex, 0 , moved)
-                setMalleableList(next)
-            } */
+           else if (targetOriginId === dragSource) {
+            // Sort jos target = rivi
+            // Toimii molemmissa listoissa normaalisti
+                if (dragSource === LIST_IDS.SOURCE) {
+                    const overIndex = malleableList.findIndex(item => item.id === over.id)
+                    const activeIndex = malleableList.findIndex(item => item.id === active.id)
+                    const nextList = [...malleableList]
+                    const [moved] = nextList.splice(activeIndex, 1)
+                    nextList.splice(overIndex, 0, moved)
+                    setMalleableList(nextList)
+                }
+                else if (dragSource === LIST_IDS.TARGET) {
+                    const overIndex = day.meals.findIndex(item => item.id === over.id)
+                    const activeIndex = day.meals.findIndex(item => item.id === active.id)
+                    const nextList = [...day.meals]
+                    const [moved] = nextList.splice(activeIndex, 1)
+                    nextList.splice(overIndex, 0, moved)
+                    setDay({...day, meals: nextList})              
+                }
+       
+           }
         }
         
     }
@@ -230,6 +238,7 @@ export default function DayPlanner() {
         .catch((err) => console.error(err))
     }
 
+    // Tarkistaa ja estää item korttien duplikaation, joka taas estää dnd rikkoutumisen.
     const handleMalleableList = (newList: FoodItem[]) => {
         const duplicates = new Set(day.meals.map(item => item.id))
         const filteredList = newList.filter((item) => !duplicates.has(item.id))

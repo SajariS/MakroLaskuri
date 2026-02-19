@@ -101,7 +101,7 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
 
     useEffect(() => {
         if (!search) {
-            setMalleableList(sourceList)
+            setMalleableList([...sourceList])
         }
         const filtered = sourceList.filter((item) => item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
         setMalleableList(filtered)
@@ -115,6 +115,7 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
                 size="small"
                 onClick={() => setAddDia(true)}
             >TODO! Siirrä ja i18n. Lisäys nappi</Button>
+            <Button onClick={() => console.log(sourceList)}>debug</Button>
             <TextField 
                 value={search}
                 onChange={handleChange}

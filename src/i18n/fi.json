@@ -29,6 +29,9 @@
     "addItem.volumeInl": "Tilavuus (l)",
     "addItem.weightInGrams": "Paino (g)",
 
-    "itemCard.kcalSum": "Kcal yhteensä:"
+    "itemCard.kcalSum": "Kcal yhteensä:",
+    "itemCard.nutrition": "Ravintoarvot",
+    "itemCard.per100g": "per 100g",
+    "itemCard.per100ml": "per 100ml"
     
 }

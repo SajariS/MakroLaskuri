@@ -9,6 +9,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import type { FoodItem, FoodItemNumberKey } from "../interfaces/FoodItem"
 import { LangContext } from "../context/LangContext"
 import NumberSpinner from "./NumberSpinner"
+import { mealHandler } from "../services/mealHandler"
 
 type itemCardProps = {
     item: Drink | Meal
@@ -21,6 +22,7 @@ export default function ItemCard({ item, listId, handleAmountChange }: itemCardP
     const t = (key: string) => texts?.[key ?? key]
     const [expanded, setExpanded] = useState<boolean>(false)
     const [count, setCount] = useState<number>(1)
+    const isMeal = mealHandler.isMeal(item)
     const tableKeys = [
         "kcal", 
         "fat", 
@@ -118,8 +120,8 @@ export default function ItemCard({ item, listId, handleAmountChange }: itemCardP
                         <Table sx={{ minWidth: 650 }} size="small">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>i18n todo: Ravintoarvot</TableCell>
-                                    <TableCell>todo cond g-ml, 100g</TableCell>
+                                    <TableCell>{t("itemCard.nutrition")}</TableCell>
+                                    <TableCell>{isMeal ? t("itemCard.per100g") : t("itemCard.per100ml")}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
