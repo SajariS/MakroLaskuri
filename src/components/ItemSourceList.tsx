@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useDeferredValue, useEffect, useRef, useState } from "react";
 import { Box, Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, TextField } from "@mui/material";
 import { sortList } from "../services/sortList";
 import { useDroppable } from "@dnd-kit/core";
@@ -11,11 +11,12 @@ import type { FoodItem, FoodItemKey } from "../interfaces/FoodItem";
 type ItemSourceListProps = {
     sourceList: FoodItem[]
     malleableList: FoodItem[]
-    setSourceList: (list: FoodItem[]) => void
     setMalleableList: (list: FoodItem[]) => void
     setAddDia: (state: boolean) => void
     listId: string
     listRef: React.RefObject<HTMLDivElement | null>
+    search: string
+    setSearch: (keyword: string) => void
 }
 
 type optionsType = {
@@ -23,8 +24,7 @@ type optionsType = {
     key: FoodItemKey
 }
 
-export default function ItemSourceList({sourceList, setSourceList, malleableList, setMalleableList, listId, listRef, setAddDia}: ItemSourceListProps) {
-    const [search, setSearch] = useState<string>("")
+export default function ItemSourceList({sourceList, malleableList, setMalleableList, listId, listRef, setAddDia, search, setSearch}: ItemSourceListProps) {
     const [sortOpen, setSortOpen] = useState<boolean>(false)
     const anchorRef = useRef<HTMLDivElement>(null)
     const [sortIndex, setSortIndex] = useState<number>(1)
@@ -33,6 +33,7 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
     // Kuvaa nykyistä tilaa, sort funktio kääntää true = norm, false = inv
     // Eli Jos tila on norm, muuttuja false = seuraava sort on inv ja toggle -> true jne.
     const [sortInversion, setSortInversion] = useState<boolean>(false)
+    const deferredSearch = useDeferredValue(search)
 
     const sortOptions: optionsType[] = [
         {i18n: t("sortOptions.name"), key: "name"}, 
@@ -99,13 +100,14 @@ export default function ItemSourceList({sourceList, setSourceList, malleableList
         setSearch(e.target.value)
     }
 
+    
     useEffect(() => {
-        if (!search) {
+        if (!deferredSearch) {
             setMalleableList([...sourceList])
         }
-        const filtered = sourceList.filter((item) => item.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        const filtered = sourceList.filter((item) => item.name.toLocaleLowerCase().includes(deferredSearch.toLocaleLowerCase()))
         setMalleableList(filtered)
-    }, [search])
+    }, [deferredSearch])
 
     if (!texts) return <p>Loading...</p>
 

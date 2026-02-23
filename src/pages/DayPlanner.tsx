@@ -5,7 +5,7 @@ import { mealHandler } from "../services/mealHandler";
 import { drinkHandler } from "../services/drinkHandler";
 import { sortList } from "../services/sortList";
 import ItemSourceList from "../components/ItemSourceList";
-import { DndContext, DragOverlay, useDroppable, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
+import { DndContext, DragOverlay, type DragEndEvent, type DragStartEvent } from "@dnd-kit/core";
 import { MacroCalc } from "../components/MacroCalc";
 import type { Day } from "../interfaces/Day";
 import ItemTargetList from "../components/ItemTargetList";
@@ -26,6 +26,7 @@ export default function DayPlanner() {
     const targetRef = useRef<HTMLDivElement | null>(null)
     const [addDialog, setAddDialog] = useState<boolean>(false)
     const [dragItem, setDragItem] = useState<FoodItem | null>(null)
+    const [search, setSearch] = useState<string>("")
 
     // Tyyppiä pitää muokata tarpeen tulleen ja koko sivun rakennetta muuttaa jos halutaan käyttää Day oliota
     // Tällä hetkellä käytössä vain lista jota kaikki komponentit käyttää ja laskee itse 
@@ -274,10 +275,11 @@ export default function DayPlanner() {
                         listId={LIST_IDS.SOURCE} 
                         sourceList={sourceList} 
                         malleableList={malleableList} 
-                        setSourceList={setSourceList} 
                         setMalleableList={handleMalleableList} 
                         listRef={sourceRef}
                         setAddDia={setAddDialog}
+                        search={search}
+                        setSearch={setSearch}
                         />
                     </Box>
                 </Box>

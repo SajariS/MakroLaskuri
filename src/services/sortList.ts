@@ -8,13 +8,11 @@ export function sortList(list: FoodItem[], key: FoodItemKey, direction: boolean)
     }
     console.log("Recieved inversion: " + direction)
     if (list[0][key] !== null && Number.isNaN(Number(list[0][key]))) {
-        console.log("TEsti")
         return list.sort((a, b) => {
             /*if (String(a[key]).toUpperCase() > String(b[key]).toUpperCase()) return direction ? -1 : 1
             if (String(a[key]).toUpperCase() > String(b[key]).toUpperCase()) return direction ? 1 : -1
             return 0 */
             if (direction) {
-                console.log(String(a[key]).toUpperCase() + String(b[key]).toUpperCase())
                 return String(a[key]).toUpperCase() > String(b[key]).toUpperCase() ? -1 : 1
             }
             else {
