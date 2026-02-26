@@ -9,3 +9,5 @@ export interface Macros {
     kcal: number
     salt: number
 }
+
+export type MacroKeys = keyof Macros

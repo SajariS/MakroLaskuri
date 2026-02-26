@@ -1,11 +1,12 @@
-import { useEffect, useState, type LinkHTMLAttributes } from "react";
-import { Box, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import type { Macros } from "../interfaces/Nutrition";
+import { useContext, useEffect, useState, type LinkHTMLAttributes } from "react";
+import { Box, Grid, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import type { MacroKeys, Macros } from "../interfaces/Nutrition";
 import { Bar, BarChart, PieChart, Tooltip, XAxis, YAxis, type BarShapeProps } from "recharts";
 import KcalPie from "./KcalPie";
 import NumberSpinner from "./NumberSpinner";
 import type { Day } from "../interfaces/Day";
 import type { FoodItemKey } from "../interfaces/FoodItem";
+import { LangContext } from "../context/LangContext";
 
 type MacroCalcProps = {
     day: Day
@@ -25,7 +26,9 @@ type Totals = {
 }
 
 export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCalcProps) {
-
+    const macroKeys: MacroKeys[] = ["kcal", "protein", "carbs", "sugar", "fat", "hardFat", "salt"]
+    const { texts } = useContext(LangContext)
+    const t = (key: string) => texts?.[key ?? key]
 
     /*const [limits, setLimits] = useState<LimitsType[]>([
         {toggle: false, key: "protein", limit: 0, sum: 0},
@@ -36,6 +39,21 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
         {toggle: false, key: "hardFat", limit: 0, sum: 0},
         {toggle: false, key: "salt", limit: 0, sum: 0},
     ])*/
+
+    const percentageColor = (percent: number) => {
+        if (percent > 105) return "error.main"
+        if (percent >= 101) return "warning.main"
+        return "success.main"
+    }
+
+    const renderPercentage = (base: number, part: number) => {
+        const percent = Math.round((part / base) * 100)
+        if (Number.isNaN(percent)) return
+
+        return(
+            <Typography sx={{ color: percentageColor(percent)}}>{percent}%</Typography>
+        )
+    }
 
     const checkLimitToggle = (key: string) => {
         switch (key) {
@@ -94,40 +112,37 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
         <Paper elevation={1}>
             <Paper>
                 <Box>
-                    {day.kcalLimit ?
-                        <KcalPie sum={day.totalMacros.kcal} limit={day.macroLimits.kcal}/>
-                    :
-                        <Typography>TODO! Iso KCAL teksti: {day.totalMacros.kcal}</Typography>
-                    }
-                    <BarChart
-                        width={500}
-                        height={300}
-                        data={Object.entries(day.totalMacros).filter(([key]) => key !== "kcal").map(([key, value]) => ({ key, value }))}
-                        margin={{ top: 20, bottom: 20 }}
-                    >
-                        <XAxis dataKey="key" />
-                        <YAxis/>
-                        <Tooltip />
-                        <Bar dataKey="value" shape={barRender} />
-                    </BarChart>
-                </Box>
-                <Box>
-                    {Object.entries(day.macroLimits).map(([key, value]) => (
-                        <Box key={key}>
-                            <Typography>{key}</Typography>
-                            <Switch
-                                checked={checkLimitToggle(key)}
-                                onChange={() => handleLimitToggle(key)}
-                            />
-                            {checkLimitToggle(key) && 
-                            <NumberSpinner
-                                label={key + ": limit"}
-                                min={0}
-                                size="small"
-                                value={value}
-                                onValueChange={(value) => handleLimitChange(key as keyof Macros, value ?? 0)}
-                            />}
-                        </Box>
+                    {macroKeys.map((key) => (
+                        <Grid container spacing={1} alignItems="center" sx={{ minHeight: 50}} key={key}>
+                            <Grid size={3}>
+                                <Typography>{t(`macros.${key}`)}</Typography>
+                            </Grid>
+                            <Grid size={2}>
+                                {checkLimitToggle(key) ? 
+                                    <Typography>{`${day.totalMacros[key]} / ${day.macroLimits[key]}`}</Typography>
+                                    :
+                                    <Typography>{day.totalMacros[key]}</Typography>
+                                }
+                            </Grid>
+                            <Grid size={1}>
+                                {checkLimitToggle(key) && renderPercentage(day.macroLimits[key], day.totalMacros[key])}
+                            </Grid>
+                            <Grid size={2}>
+                                <Switch
+                                    checked={checkLimitToggle(key)}
+                                    onChange={() => handleLimitToggle(key)}
+                                />
+                            </Grid>
+                            <Grid size={3}>
+                                {checkLimitToggle(key) &&
+                                    <NumberSpinner
+                                        min={0}
+                                        size="small"
+                                        value={day.macroLimits[key]}
+                                        onValueChange={(value) => handleLimitChange(key, value ?? 0)}
+                                    />}
+                            </Grid>
+                        </Grid>
                     ))}
                 </Box>
 

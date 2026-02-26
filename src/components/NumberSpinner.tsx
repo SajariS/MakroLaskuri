@@ -48,34 +48,36 @@ export default function NumberSpinner({
         >
             <BaseNumberField.ScrubArea
                 render={
-                    <Box component="span" sx={{ userSelect: 'none', width: 'max-content'}} />
+                    <Box component="span" sx={{ userSelect: 'none', width: 'max-content' }} />
                 }
             >
-                <FormLabel
-                    htmlFor={id}
-                    sx={{
-                        display: 'inline-block',
-                        cursor: 'ew-resize',
-                        fontSize: '0.875rem',
-                        color: 'text.primary',
-                        fontWeight: 500,
-                        lineHeight: 1.5,
-                        mb: 0.5
-                    }}
-                >
-                    {label}
-                </FormLabel>
+                {label !== undefined &&
+                    <FormLabel
+                        htmlFor={id}
+                        sx={{
+                            display: 'inline-block',
+                            cursor: 'ew-resize',
+                            fontSize: '0.875rem',
+                            color: 'text.primary',
+                            fontWeight: 500,
+                            lineHeight: 1.5,
+                            mb: 0.5
+                        }}
+                    >
+                        {label}
+                    </FormLabel>
+                }
                 <BaseNumberField.ScrubAreaCursor>
-                    <OpenInFullIcon 
+                    <OpenInFullIcon
                         fontSize="small"
                         sx={{ transform: 'translateY(12.5%) rotate(45deg)' }}
                     />
                 </BaseNumberField.ScrubAreaCursor>
             </BaseNumberField.ScrubArea>
             <Box sx={{ display: 'flex' }}>
-                <BaseNumberField.Decrement 
+                <BaseNumberField.Decrement
                     render={
-                        <Button 
+                        <Button
                             variant="outlined"
                             aria-label="Decrease"
                             size={size}
@@ -96,7 +98,7 @@ export default function NumberSpinner({
                 <BaseNumberField.Input
                     id={id}
                     render={(props, state) => (
-                        <OutlinedInput 
+                        <OutlinedInput
                             inputRef={props.ref}
                             value={state.inputValue}
                             onBlur={props.onBlur}
@@ -121,9 +123,9 @@ export default function NumberSpinner({
                     )}
                 />
 
-                <BaseNumberField.Increment 
+                <BaseNumberField.Increment
                     render={
-                        <Button 
+                        <Button
                             variant="outlined"
                             aria-label="Increase"
                             size={size}
