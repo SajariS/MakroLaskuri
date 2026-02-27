@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, type LinkHTMLAttributes } from "react";
-import { Box, Grid, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Collapse, Grid, keyframes, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import type { MacroKeys, Macros } from "../interfaces/Nutrition";
 import { Bar, BarChart, PieChart, Tooltip, XAxis, YAxis, type BarShapeProps } from "recharts";
 import KcalPie from "./KcalPie";
@@ -48,7 +48,7 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
 
     const renderPercentage = (base: number, part: number) => {
         const percent = Math.round((part / base) * 100)
-        if (Number.isNaN(percent)) return
+        if (Number.isNaN(percent)) return (<Typography sx={{ color: percentageColor(0)}}>{0}%</Typography>)
 
         return(
             <Typography sx={{ color: percentageColor(percent)}}>{percent}%</Typography>
@@ -113,19 +113,52 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
             <Paper>
                 <Box>
                     {macroKeys.map((key) => (
-                        <Grid container spacing={1} alignItems="center" sx={{ minHeight: 50}} key={key}>
+                        <Grid 
+                        container spacing={1} 
+                        alignItems="center" 
+                        key={key} 
+                        sx={{ 
+                            minHeight: 50, 
+                            transition: 'background-color 150ms ease',
+                            "&:hover": {
+                                backgroundColor: 'action.hover'
+                            }
+                        }}>
                             <Grid size={3}>
                                 <Typography>{t(`macros.${key}`)}</Typography>
                             </Grid>
-                            <Grid size={2}>
-                                {checkLimitToggle(key) ? 
-                                    <Typography>{`${day.totalMacros[key]} / ${day.macroLimits[key]}`}</Typography>
-                                    :
+                            <Grid size={3}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-end',
+                                        alignItems: 'center',
+                                    }}
+                                >
                                     <Typography>{day.totalMacros[key]}</Typography>
-                                }
+                                    <Collapse
+                                        in={checkLimitToggle(key)}
+                                        orientation="horizontal"
+                                        sx={{ 
+                                            overflow: 'hidden',
+                                            display: 'inline-block',
+                                            verticalAlign: 'middle'
+                                        }}
+                                    >
+                                        <Typography sx={{ whiteSpace: 'nowrap' }}>
+                                            {" / "}
+                                            {day.macroLimits[key]}
+                                        </Typography>
+                                    </Collapse>
+                                </Box>
                             </Grid>
                             <Grid size={1}>
-                                {checkLimitToggle(key) && renderPercentage(day.macroLimits[key], day.totalMacros[key])}
+                                <Collapse
+                                    in={checkLimitToggle(key)}
+                                    orientation="horizontal"
+                                >
+                                    {renderPercentage(day.macroLimits[key], day.totalMacros[key])}
+                                </Collapse>
                             </Grid>
                             <Grid size={2}>
                                 <Switch
@@ -134,13 +167,17 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
                                 />
                             </Grid>
                             <Grid size={3}>
-                                {checkLimitToggle(key) &&
+                                <Collapse
+                                    in={checkLimitToggle(key)}
+                                    orientation="horizontal"
+                                >
                                     <NumberSpinner
                                         min={0}
                                         size="small"
                                         value={day.macroLimits[key]}
                                         onValueChange={(value) => handleLimitChange(key, value ?? 0)}
-                                    />}
+                                    />
+                                </Collapse>
                             </Grid>
                         </Grid>
                     ))}
