@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState, type LinkHTMLAttributes } from "react";
-import { Box, Collapse, Grid, keyframes, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, Collapse, Grid, keyframes, List, ListItem, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import type { MacroKeys, Macros } from "../interfaces/Nutrition";
 import { Bar, BarChart, PieChart, Tooltip, XAxis, YAxis, type BarShapeProps } from "recharts";
 import KcalPie from "./KcalPie";
 import NumberSpinner from "./NumberSpinner";
 import type { Day } from "../interfaces/Day";
-import type { FoodItemKey } from "../interfaces/FoodItem";
+import type { FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem";
 import { LangContext } from "../context/LangContext";
 
 type MacroCalcProps = {
@@ -25,20 +25,25 @@ type Totals = {
     [key: string]: number
 }
 
+type dynamicMacroKey = FoodItemNumberKey & MacroKeys
+
 export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCalcProps) {
-    const macroKeys: MacroKeys[] = ["kcal", "protein", "carbs", "sugar", "fat", "hardFat", "salt"]
+    const macroKeys: dynamicMacroKey[] = ["kcal", "protein", "carbs", "sugar", "fat", "hardFat", "salt"]
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]
+    const [listKey, setListKey] = useState<dynamicMacroKey>("kcal")
 
-    /*const [limits, setLimits] = useState<LimitsType[]>([
-        {toggle: false, key: "protein", limit: 0, sum: 0},
-        {toggle: false, key: "carbs", limit: 0, sum: 0}, 
-        {toggle: false, key: "sugar", limit: 0, sum: 0},
-        {toggle: false, key: "kcal", limit: 0, sum: 0},
-        {toggle: false, key: "fat", limit: 0, sum: 0},
-        {toggle: false, key: "hardFat", limit: 0, sum: 0},
-        {toggle: false, key: "salt", limit: 0, sum: 0},
-    ])*/
+    const listData = day.meals.map((item) => {
+        const value = item.totalMacros[listKey]
+        const percent = day.totalMacros ? Math.round((value / day.totalMacros[listKey as MacroKeys]) * 100) : 0
+
+        return {
+            id: item.id,
+            name: item.name,
+            percent,
+            displayValue: `${value} ${t(`macros.${listKey}`)} - TODO oma lyhenne!`
+        }
+    }).sort((a, b) => b.percent - a.percent)
 
     const percentageColor = (percent: number) => {
         if (percent > 105) return "error.main"
@@ -184,36 +189,35 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
                 </Box>
 
             </Paper>
-            <TableContainer component={Paper}>
-                <Table size="small" sx={{ minWidth: 650}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>TODO! Makros title</TableCell>
-                            <TableCell align="right">TODO! Kcal</TableCell>
-                            <TableCell align="right">TODO! Protein</TableCell>
-                            <TableCell align="right">TODO! Carbs</TableCell>
-                            <TableCell align="right">TODO! Sugar</TableCell>
-                            <TableCell align="right">TODO! fat</TableCell>
-                            <TableCell align="right">TODO! hardFat</TableCell>
-                            <TableCell align="right">TODO! salt</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {day.meals.map((item) => (
-                            <TableRow key={item.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell component="th" scope="row">{item.name}</TableCell>
-                                <TableCell align="right">{item.kcal}</TableCell>
-                                <TableCell align="right">{item.protein}</TableCell>
-                                <TableCell align="right">{item.carbs}</TableCell>
-                                <TableCell align="right">{item.sugar}</TableCell>
-                                <TableCell align="right">{item.fat}</TableCell>
-                                <TableCell align="right">{item.hardFat}</TableCell>
-                                <TableCell align="right">{item.salt}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <Paper>
+                <ButtonGroup size="small" variant="contained">
+                    {macroKeys.map((key) => (
+                        <Button
+                            disabled={listKey === key}
+                            onClick={() => setListKey(key)}
+                        >
+                            {t(`macros.${key}`)}
+                        </Button>
+                    ))}
+                </ButtonGroup>
+                <List dense>
+                    {listData.map((item) => (
+                        <ListItem key={item.id}>
+                            <Grid container alignItems="center">
+                                <Grid size={3}>
+                                    <Typography>{item.name}</Typography>
+                                </Grid>
+                                <Grid size={3} textAlign="right">
+                                    <Typography>{item.percent}</Typography>
+                                </Grid>
+                                <Grid size={3} textAlign="right">
+                                    <Typography color="text.secondary">{item.displayValue}</Typography>
+                                </Grid>
+                            </Grid>
+                        </ListItem>
+                    ))}
+                </List>
+            </Paper>
         </Paper>
     )
 
