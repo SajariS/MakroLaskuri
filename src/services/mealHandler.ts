@@ -17,7 +17,9 @@ const loadMeals = (): Meal[] => {
 }
 
 const saveMeals = (meals: Meal[]) => {
+    console.time('abc')
     localStorage.setItem(MEAL_KEY, JSON.stringify(meals))
+    console.timeEnd('abc')
 }
 
 export const mealHandler = {

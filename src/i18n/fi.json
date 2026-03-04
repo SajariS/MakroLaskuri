@@ -17,6 +17,14 @@
     "macros.kcal": "Energia (kcal)",
     "macros.salt": "Suola",
 
+    "calcList.protein": "g Proteiinia",
+    "calcList.carbs": "g Hiilihydraattia",
+    "calcList.sugar": "g Sokeria",
+    "calcList.fat": "g Rasvaa",
+    "calcList.hardFat": "g Tyydyttyneitä Rasvoja",
+    "calcList.kcal": "kcal Energiaa",
+    "calcList.salt": "g Suolaa",
+    "calcList.toolTip": "Osuus päivän ravintoarvosta",
 
     "addItem.name": "Nimi",
     "addItem.kcal": "Energia (kcal)",

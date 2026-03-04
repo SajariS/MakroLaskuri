@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState, type LinkHTMLAttributes } from "react";
-import { Box, Button, ButtonGroup, Collapse, Grid, keyframes, List, ListItem, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, Chip, Collapse, Grid, keyframes, List, ListItem, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
 import type { MacroKeys, Macros } from "../interfaces/Nutrition";
-import { Bar, BarChart, PieChart, Tooltip, XAxis, YAxis, type BarShapeProps } from "recharts";
-import KcalPie from "./KcalPie";
 import NumberSpinner from "./NumberSpinner";
 import type { Day } from "../interfaces/Day";
 import type { FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem";
@@ -41,7 +39,7 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
             id: item.id,
             name: item.name,
             percent,
-            displayValue: `${value} ${t(`macros.${listKey}`)} - TODO oma lyhenne!`
+            displayValue: `${value} ${t(`calcList.${listKey}`)}`
         }
     }).sort((a, b) => b.percent - a.percent)
 
@@ -79,38 +77,6 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
             default:
                 return false
         }
-    }
-
-    const barRender = (props: BarShapeProps) => {
-        const { x, y, width, height, payload } = props
-        const overLimit = payload.toggle && payload.sum > payload.limit
-        
-
-        return (
-            <g>
-                <rect x={x} y={y} width={width} height={height} fill={overLimit ? "red" : "blue"} />
-                <text 
-                    x={x + width / 2}
-                    y={y + height / 2}
-                    fill="white"
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontSize={12}
-                >
-                    {payload.sum}
-                </text>
-                {payload.toggle && (
-                    <line 
-                        x1={x}
-                        x2={x + width}
-                        y1={y + height -((payload.limit / payload.sum) * height)}
-                        y2={y + height -((payload.limit / payload.sum) * height)}
-                        stroke="black"
-                        strokeWidth={2}
-                    />
-                )}
-            </g>
-        )
     }
 
     return (
@@ -200,17 +166,31 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
                         </Button>
                     ))}
                 </ButtonGroup>
-                <List dense>
+                <List>
                     {listData.map((item) => (
-                        <ListItem key={item.id}>
-                            <Grid container alignItems="center">
-                                <Grid size={3}>
+                        <ListItem 
+                            key={item.id} 
+                            sx={{ 
+                                justifyContent: 'flex-start',
+                                "&:hover": {
+                                    backgroundColor: 'action.hover'
+                                }
+                            }}>
+                            <Grid container alignItems="center" spacing={2} sx={{ width: '100%'}}>
+                                <Grid size={2}>
+                                    <Tooltip
+                                        title={t("calcList.toolTip")}
+                                        placement="right"
+                                    >
+                                        <Chip 
+                                            label={`${item.percent}%`}
+                                        />
+                                    </Tooltip>
+                                </Grid>
+                                <Grid size={2}>
                                     <Typography>{item.name}</Typography>
                                 </Grid>
-                                <Grid size={3} textAlign="right">
-                                    <Typography>{item.percent}</Typography>
-                                </Grid>
-                                <Grid size={3} textAlign="right">
+                                <Grid size={5} textAlign="right">
                                     <Typography color="text.secondary">{item.displayValue}</Typography>
                                 </Grid>
                             </Grid>
