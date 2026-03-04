@@ -15,6 +15,10 @@ type AddItemProps = {
     handleAdd: (item: FoodItem) => void
 }
 
+type MassUnit = "mg" | "g" | "kg"
+type VolumeUnit = "ml" | "dl" | "l"
+type Unit = MassUnit | VolumeUnit
+
 const renderKeys = ['kcal', 'fat', 'hardFat', 'carbs', 'sugar', 'protein', 'salt']
 
 export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
@@ -24,12 +28,52 @@ export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
     const [newItem, setNewitem] = useState<Meal | Drink>(defaultMeal)
     // true = meal, false = drink
     const [itemSwitch, setItemSwitch] = useState<boolean>(true)
+    const [unit, setUnit] = useState<Unit>(itemSwitch ? 'g' : 'l')
+
+    const handleConversion = (value: number, from: Unit, to: Unit) => {
+        const base = (() => {
+            switch (from) {
+                case "mg":
+                    return value / 1000
+                case "g":
+                    return value
+                case "kg":
+                    return value * 1000
+                case "ml":
+                    return value / 1000
+                case "dl":
+                    return value / 10
+                case "l":
+                    return value
+            }
+        })()
+
+        switch (to) {
+            case "mg":
+                return base * 1000
+            case "g":
+                return base
+            case "kg":
+                return base / 1000
+            case "ml":
+                return base * 1000
+            case "dl":
+                return base * 10
+            case "l":
+                return base
+        }
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewitem({...newItem, [e.target.name]: e.target.value})
     }
 
     const handleSpinnerChange = (key: FoodItemKey, value: number) => {
+        setNewitem({...newItem, [key]: value})
+    }
+
+    const handleMeasureSpinner = (key: FoodItemKey, value: number) => {
+        const convertedValue = itemSwitch ? handleConversion(value, unit, "g") : handleConversion(value, unit, 'l')
         setNewitem({...newItem, [key]: value})
     }
 
@@ -58,6 +102,11 @@ export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
     const handleCancel = () => {
         setToggle(false)
     }
+
+    // Käytetään tilavuus/massa renderissä jotta se on erillään ns "oikeasta" arvosta ilman muunnoksia
+    const displayValue = mealHandler.isMeal(newItem) ?
+        handleConversion(newItem.weightInGrams, "g", unit) :
+        handleConversion(newItem.volumeInl, 'l', unit)
 
     if (!texts) return <p>Loading...</p>
 
@@ -94,8 +143,8 @@ export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
                 <Typography>{t("addItem.weightInGrams")}</Typography>
                 <NumberSpinner 
                     name="weightInGrams"
-                    value={newItem.weightInGrams}
-                    onValueChange={(value) => handleSpinnerChange("weightInGrams" as keyof FoodItem, value ?? 0)}
+                    value={displayValue}
+                    onValueChange={(value) => handleMeasureSpinner("weightInGrams" as keyof FoodItem, value ?? 0)}
                 />
             </Box>
             :
@@ -103,8 +152,8 @@ export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
                 <Typography>{t("addItem.volumeInl")}</Typography>
                 <NumberSpinner 
                     name="volumeInl"
-                    value={newItem.volumeInl}
-                    onValueChange={(value) => handleSpinnerChange("volumeInl" as keyof FoodItem, value ?? 0)}
+                    value={displayValue}
+                    onValueChange={(value) => handleMeasureSpinner("volumeInl" as keyof FoodItem, value ?? 0)}
                 />
             </Box>            
             }
