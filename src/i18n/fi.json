@@ -27,6 +27,8 @@
     "calcList.toolTip": "Osuus päivän ravintoarvosta",
 
     "addItem.name": "Nimi",
+    "addItem.liquid": "Neste",
+    "addItem.solid": "Kiinteä",
     "addItem.kcal": "Energia (kcal)",
     "addItem.fat": "Rasva",
     "addItem.hardFat": "Tyydyttynyt rasva",
@@ -34,8 +36,8 @@
     "addItem.sugar": "Sokerit",
     "addItem.protein": "Proteiini",
     "addItem.salt": "Suola",
-    "addItem.volumeInl": "Tilavuus (l)",
-    "addItem.weightInGrams": "Paino (g)",
+    "addItem.volumeInl": "Tilavuus",
+    "addItem.weightInGrams": "Paino",
 
     "itemCard.kcalSum": "Kcal yhteensä:",
     "itemCard.nutrition": "Ravintoarvot",
