@@ -1,10 +1,11 @@
-import { useContext, useEffect, useState, type LinkHTMLAttributes } from "react";
-import { Box, Button, ButtonGroup, Chip, Collapse, Grid, keyframes, List, ListItem, Paper, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
+import { useContext, useState } from "react";
+import { Box, Chip, Collapse, Grid, List, ListItem, Paper, Switch, Tooltip, Typography } from "@mui/material";
 import type { MacroKeys, Macros } from "../interfaces/Nutrition";
 import NumberSpinner from "./NumberSpinner";
 import type { Day } from "../interfaces/Day";
 import type { FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem";
 import { LangContext } from "../context/LangContext";
+import { motion } from "motion/react"
 
 type MacroCalcProps = {
     day: Day
@@ -24,6 +25,8 @@ type Totals = {
 }
 
 type dynamicMacroKey = FoodItemNumberKey & MacroKeys
+
+const MotionDiv = motion.div
 
 export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCalcProps) {
     const macroKeys: dynamicMacroKey[] = ["kcal", "protein", "carbs", "sugar", "fat", "hardFat", "salt"]
@@ -156,47 +159,57 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
 
             </Paper>
             <Paper>
-                <ButtonGroup size="small" variant="contained">
+                <Box display="flex" gap={1} flexWrap="wrap">
                     {macroKeys.map((key) => (
-                        <Button
-                            disabled={listKey === key}
+                        <Chip
+                            key={key}
+                            label={t(`macros.${key}`)}
+                            clickable={listKey !== key}
+                            variant={listKey === key ? 'filled': 'outlined'}
                             onClick={() => setListKey(key)}
-                        >
-                            {t(`macros.${key}`)}
-                        </Button>
+                            size="small"
+
+                        />
                     ))}
-                </ButtonGroup>
+                </Box>
+                <MotionDiv layout>
                 <List>
                     {listData.map((item) => (
-                        <ListItem 
-                            key={item.id} 
-                            sx={{ 
-                                justifyContent: 'flex-start',
-                                "&:hover": {
-                                    backgroundColor: 'action.hover'
-                                }
-                            }}>
-                            <Grid container alignItems="center" spacing={2} sx={{ width: '100%'}}>
-                                <Grid size={2}>
-                                    <Tooltip
-                                        title={t("calcList.toolTip")}
-                                        placement="right"
-                                    >
-                                        <Chip 
-                                            label={`${item.percent}%`}
-                                        />
-                                    </Tooltip>
+                        <MotionDiv
+                            key={item.id}
+                            layout="position"
+                        >
+                            <ListItem 
+                                sx={{ 
+                                    justifyContent: 'flex-start',
+                                    "&:hover": {
+                                        backgroundColor: 'action.hover'
+                                    },
+                                    
+                                }}>
+                                <Grid container alignItems="center" spacing={2} sx={{ width: '100%'}}>
+                                    <Grid size={2}>
+                                        <Tooltip
+                                            title={t("calcList.toolTip")}
+                                            placement="right"
+                                        >
+                                            <Chip 
+                                                label={`${item.percent}%`}
+                                            />
+                                        </Tooltip>
+                                    </Grid>
+                                    <Grid size={2}>
+                                        <Typography>{item.name}</Typography>
+                                    </Grid>
+                                    <Grid size={5} textAlign="right">
+                                        <Typography color="text.secondary">{item.displayValue}</Typography>
+                                    </Grid>
                                 </Grid>
-                                <Grid size={2}>
-                                    <Typography>{item.name}</Typography>
-                                </Grid>
-                                <Grid size={5} textAlign="right">
-                                    <Typography color="text.secondary">{item.displayValue}</Typography>
-                                </Grid>
-                            </Grid>
-                        </ListItem>
+                            </ListItem>
+                        </MotionDiv>
                     ))}
                 </List>
+                </MotionDiv>
             </Paper>
         </Paper>
     )
