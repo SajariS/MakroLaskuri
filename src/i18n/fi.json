@@ -42,6 +42,12 @@
     "itemCard.kcalSum": "Kcal yhteensä:",
     "itemCard.nutrition": "Ravintoarvot",
     "itemCard.per100g": "per 100g",
-    "itemCard.per100ml": "per 100ml"
+    "itemCard.per100ml": "per 100ml",
+    "itemCard.removeTarget": "Poista rivi päivästä",
+    "itemCard.removeSource": "Poista rivi muistista",
     
+    "dayPlanner.targetLabel": "Päivän ateriat ja juomat",
+    "dayPlanner.targetPlaceholder": "Siirrä rivi lisätäksesi päivään",
+    "dayPlanner.addButton": "Lisää uusi rivi listaan",
+    "dayPlanner.searchPlaceholder": "Hae nimen perusteella"
 }

@@ -3,7 +3,7 @@ import { useContext, useState } from "react"
 import { CSS } from "@dnd-kit/utilities"
 import type { Drink } from "../interfaces/Drink"
 import type { Meal } from "../interfaces/Meal"
-import { Box, Collapse, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
+import { Box, Card, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import CardHeaderBar from "./CardHeaderBar"
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import type { FoodItem, FoodItemNumberKey } from "../interfaces/FoodItem"
@@ -15,9 +15,10 @@ type itemCardProps = {
     item: Drink | Meal
     listId: string | undefined
     handleAmountChange?: (item: FoodItem, amount: number) => void
+    contextualDelete: (item: FoodItem) => void
 }
 
-export default function ItemCard({ item, listId, handleAmountChange }: itemCardProps) {
+export default function ItemCard({ item, listId, handleAmountChange, contextualDelete }: itemCardProps) {
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]
     const [expanded, setExpanded] = useState<boolean>(false)
@@ -54,18 +55,24 @@ export default function ItemCard({ item, listId, handleAmountChange }: itemCardP
         if (handleAmountChange) handleAmountChange(item, value)
     }
 
+    const handleDeleteClick = () => {
+        contextualDelete(item)
+    }
+
     return(
-        <Box 
+        <Card 
             ref={setNodeRef}
+            elevation={1}
             sx={{
-                width: '100%',
-                perspective: '1000px',
-                cursor: 'pointer',
+                width: '95%',
                 transform: CSS.Translate.toString(transform),
                 transition,
                 visibility: isDragging ? 'hidden' : 'visible',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                border: "1px solid",
+                borderColor: "divider",
+
             }}
         >
         
@@ -73,40 +80,40 @@ export default function ItemCard({ item, listId, handleAmountChange }: itemCardP
                 title={item.name}
                 listeners={listeners}
                 attributes={attributes}
+                isMeal={isMeal}
+                handleRemove={handleDeleteClick}
+                context={listId ?? ""}
             />
             
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    width: '100%'
-                }}
+            <Grid container
+                alignItems="center"
             >
-                <IconButton
-                    size="small"
-                    onClick={() => setExpanded(prev => !prev)}
-                    sx={{
-                        transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "0.2s"
-                    }}
-                >
-                    <ExpandMoreIcon />
-                </IconButton>
+                <Grid size={1}>
+                    <IconButton
+                        size="small"
+                        onClick={() => setExpanded(prev => !prev)}
+                        sx={{
+                            transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                            transition: "0.2s"
+                        }}
+                    >
+                        <ExpandMoreIcon />
+                    </IconButton>
+                </Grid>
+                <Grid size="grow">
+                    <Typography variant="body2">{`${t("itemCard.kcalSum")} ${listId === "source" ? item.totalMacros.kcal * count : item.totalMacros.kcal}`}</Typography>
+                </Grid>
 
-                <Box>
-                    <Typography>{`${t("itemCard.kcalSum")} ${listId === "source" ? item.totalMacros.kcal * count : item.totalMacros.kcal}`}</Typography>
-                </Box>
-
-                <Box>
-                    <NumberSpinner 
+                <Grid size={5}>
+                    <NumberSpinner
                         min={1}
                         value={count}
                         onValueChange={(value) => handleChange(value ?? 1)}
                         size="small"
                     />
-                </Box>
-                <button onClick={() => console.log(listId)}>DEbug</button>
-            </Box>   
+                </Grid>
+            </Grid> 
+
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <Box
                     sx={{
@@ -117,7 +124,7 @@ export default function ItemCard({ item, listId, handleAmountChange }: itemCardP
                     }}
                 >
                     <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} size="small">
+                        <Table size="small">
                             <TableHead>
                                 <TableRow>
                                     <TableCell>{t("itemCard.nutrition")}</TableCell>
@@ -139,7 +146,7 @@ export default function ItemCard({ item, listId, handleAmountChange }: itemCardP
                     </TableContainer>
                 </Box>
             </Collapse> 
-        </Box>
+        </Card>
     )
 
 }

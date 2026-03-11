@@ -1,6 +1,6 @@
 import { Box, Dialog, Typography } from "@mui/material";
 import './DayPlanner.css'
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { mealHandler } from "../services/mealHandler";
 import { drinkHandler } from "../services/drinkHandler";
 import { sortList } from "../services/sortList";
@@ -13,6 +13,7 @@ import type { Macros } from "../interfaces/Nutrition";
 import AddItem from "../components/AddItem";
 import type { FoodItem } from "../interfaces/FoodItem";
 import DragCard from "../components/DragCard";
+import { LangContext } from "../context/LangContext";
 
 const LIST_IDS = {
     SOURCE: 'source',
@@ -20,6 +21,8 @@ const LIST_IDS = {
 }
 
 export default function DayPlanner() {
+    const { texts } = useContext(LangContext)
+    const t = (key: string) => texts?.[key ?? key]    
     const [sourceList, setSourceList] = useState<FoodItem[]>([])
     const [malleableList, setMalleableList] = useState<FoodItem[]>([])
     const sourceRef = useRef<HTMLDivElement | null>(null)
@@ -96,20 +99,6 @@ export default function DayPlanner() {
         console.log(newList)
         console.log(newTotals)
         setDay({...day, meals: newList, totalMacros: newTotals})
-    }
-
-    // Id:n avulla poisto esim. filter ei tuota toivottua tulosta sillä target voi sisältää useamman,
-    // samalla id:llä varustetun alkion.
-    // Kompromissina poistetaan ensimmäisen vastaavuus indeksin perusteella
-    // Tulevaisuudessa pitää katsoa saako drag/sort contextin dragendiin mukaan indeksin suoraan,
-    // jolloin saadaan tarkka poisto listasta eikä vain ensimmäinen vastaavuus.
-    const handleTargetRemove = (item: FoodItem | undefined) => {
-        if (!item) return
-        if (day.meals.length === 0) return
-        const removeIndex = day.meals.findIndex(row => row.id === item.id)
-        const newMeals = day.meals.splice(removeIndex, 1)
-        const newTotal = handleTotalSum(newMeals)
-        setDay({...day, meals: newMeals, totalMacros: newTotal})
     }
 
     const handleLimitToggle = (key: string) => {
@@ -246,6 +235,31 @@ export default function DayPlanner() {
         setMalleableList(filteredList)
     }
 
+    // Konteksipohjaiset poistot rivejä varten
+    // Drillataan propsina listoilla ja sieltä riveille
+    const targetRowRemove = (item: FoodItem) => {
+        const newList = day.meals.filter((row) => row.id !== item.id)
+        const newTotal = handleTotalSum(newList)
+        setDay({ ...day, meals: newList, totalMacros: newTotal })
+        if (item.name.includes(search)) {
+            const newMalleable = [...malleableList]
+            newMalleable.push(item)
+            setMalleableList(newMalleable)
+        }
+    }
+
+    const sourceRowRemove = (item: FoodItem) => {
+        const newList = malleableList.filter((row) => row.id !== item.id)
+        if (mealHandler.isMeal(item)) {
+            mealHandler.delete(item.id)
+            .then(() => setMalleableList(newList))
+        }
+        else {
+            drinkHandler.delete(item.id)
+            .then(() => setMalleableList(newList))
+        }
+    }
+
     useEffect(() => {
         const fetchLists = async() => {
             const mealList = await mealHandler.getAll()
@@ -263,14 +277,12 @@ export default function DayPlanner() {
             <Box className="pageRoot">
                 <Box className="columns">
                     <Box className="column">
-                        <Typography>TODO! Vastaanotto lista päivälle</Typography>
-                        <ItemTargetList targetList={day.meals} listId={LIST_IDS.TARGET} setTargetList={handleTargetChange}/>
+                        <ItemTargetList targetList={day.meals} listId={LIST_IDS.TARGET} setTargetList={handleTargetChange} removeRow={targetRowRemove}/>
                     </Box>
                     <Box className="column center">
                         <MacroCalc day={day} handleLimitToggle={handleLimitToggle} handleLimitChange={handleLimitChange}/>
                     </Box>
                     <Box className="column">
-                        <Typography>TODO! Lista kaikista muistin olioista + nappi lisäykseen</Typography>
                         <ItemSourceList 
                         listId={LIST_IDS.SOURCE} 
                         sourceList={sourceList} 
@@ -280,6 +292,7 @@ export default function DayPlanner() {
                         setAddDia={setAddDialog}
                         search={search}
                         setSearch={setSearch}
+                        removeRow={sourceRowRemove}
                         />
                     </Box>
                 </Box>

@@ -1,23 +1,17 @@
 import { useContext, useState } from "react";
 import { LangContext } from "../context/LangContext";
 import { mealHandler } from "../services/mealHandler";
-import { drinkHandler } from "../services/drinkHandler";
 import { Box, Button, ButtonGroup, Container, Grid, Paper, TextField, Typography } from "@mui/material";
 import type { Drink } from "../interfaces/Drink";
 import type { Meal } from "../interfaces/Meal";
 import NumberSpinner from "./NumberSpinner";
 import type { FoodItem, FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem";
-import { NumberField } from "@base-ui/react";
-import { macroSum } from "../services/calculations";
+import { handleConversion, macroSum, type Unit } from "../services/calculations";
 
 type AddItemProps = {
     setToggle: (state: boolean) => void
     handleAdd: (item: FoodItem) => void
 }
-
-type MassUnit = "mg" | "g" | "kg"
-type VolumeUnit = "ml" | "dl" | "l"
-type Unit = MassUnit | VolumeUnit
 
 export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
     const { texts } = useContext(LangContext)
@@ -29,39 +23,6 @@ export default function AddItem({ setToggle, handleAdd }: AddItemProps) {
     const [unit, setUnit] = useState<Unit>(itemSwitch ? 'g' : 'l')
     const renderKeys: FoodItemNumberKey[] = ["kcal", "protein", "carbs", "sugar", "fat", "hardFat", "salt"]
 
-    const handleConversion = (value: number, from: Unit, to: Unit) => {
-        const base = (() => {
-            switch (from) {
-                case "mg":
-                    return value / 1000
-                case "g":
-                    return value
-                case "kg":
-                    return value * 1000
-                case "ml":
-                    return value / 1000
-                case "dl":
-                    return value / 10
-                case "l":
-                    return value
-            }
-        })()
-
-        switch (to) {
-            case "mg":
-                return base * 1000
-            case "g":
-                return base
-            case "kg":
-                return base / 1000
-            case "ml":
-                return base * 1000
-            case "dl":
-                return base * 10
-            case "l":
-                return base
-        }
-    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewitem({ ...newItem, [e.target.name]: e.target.value })

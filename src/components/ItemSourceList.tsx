@@ -17,6 +17,7 @@ type ItemSourceListProps = {
     listRef: React.RefObject<HTMLDivElement | null>
     search: string
     setSearch: (keyword: string) => void
+    removeRow: (item: FoodItem) => void
 }
 
 type optionsType = {
@@ -24,7 +25,7 @@ type optionsType = {
     key: FoodItemKey
 }
 
-export default function ItemSourceList({sourceList, malleableList, setMalleableList, listId, listRef, setAddDia, search, setSearch}: ItemSourceListProps) {
+export default function ItemSourceList({sourceList, malleableList, setMalleableList, listId, listRef, setAddDia, search, setSearch, removeRow}: ItemSourceListProps) {
     const [sortOpen, setSortOpen] = useState<boolean>(false)
     const anchorRef = useRef<HTMLDivElement>(null)
     const [sortIndex, setSortIndex] = useState<number>(1)
@@ -116,12 +117,13 @@ export default function ItemSourceList({sourceList, malleableList, setMalleableL
             <Button
                 size="small"
                 onClick={() => setAddDia(true)}
-            >TODO! Siirrä ja i18n. Lisäys nappi</Button>
-            <Button onClick={() => console.log(sourceList)}>debug</Button>
+            >
+                {t("dayPlanner.addButton")}
+            </Button>
             <TextField 
                 value={search}
                 onChange={handleChange}
-                placeholder="TODO! Hae nimen perusteella"
+                placeholder={t("dayPlanner.searchPlaceholder")}
             />
             <ButtonGroup
                 variant="contained"
@@ -177,7 +179,7 @@ export default function ItemSourceList({sourceList, malleableList, setMalleableL
             }}>
                 <SortableContext items={malleableList} strategy={verticalListSortingStrategy}>
                     {malleableList.map(item => (
-                        <ItemCard item={item} listId={listId} key={item.id} />
+                        <ItemCard item={item} listId={listId} key={item.id} contextualDelete={removeRow} />
                     ))}
                 </SortableContext>
             </Box>
