@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Paper, Typography } from "@mui/material"
+import { Box, Divider, Paper, Typography } from "@mui/material"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import ItemCard from "./ItemCard"
 import type { FoodItem } from "../interfaces/FoodItem"

@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import { Box, Chip, Collapse, Divider, Grid, List, ListItem, Paper, Switch, Tooltip, Typography } from "@mui/material";
+import { Box, Chip, Collapse, Divider, Grid, List, ListItem, Switch, Tooltip, Typography } from "@mui/material";
 import type { MacroKeys, Macros } from "../interfaces/Nutrition";
 import NumberSpinner from "./NumberSpinner";
 import type { Day } from "../interfaces/Day";
-import type { FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem";
+import type { FoodItemNumberKey } from "../interfaces/FoodItem";
 import { LangContext } from "../context/LangContext";
 import { motion } from "motion/react"
 
@@ -11,17 +11,6 @@ type MacroCalcProps = {
     day: Day
     handleLimitToggle: (key: string) => void
     handleLimitChange: (key: keyof Macros, value: number) => void
-}
-
-type LimitsType = {
-    toggle: boolean
-    key: FoodItemKey
-    limit: number
-    sum: number
-}
-
-type Totals = {
-    [key: string]: number
 }
 
 type dynamicMacroKey = FoodItemNumberKey & MacroKeys
