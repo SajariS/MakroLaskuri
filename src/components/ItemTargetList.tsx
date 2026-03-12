@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Typography } from "@mui/material"
+import { Box, Button, Divider, Paper, Typography } from "@mui/material"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import ItemCard from "./ItemCard"
 import type { FoodItem } from "../interfaces/FoodItem"
@@ -40,10 +40,23 @@ export default function ItemTargetList({ targetList, listId, setTargetList, remo
     }
 
     return(
-        <Box ref={setNodeRef} sx={{ backgroundColor: green, minHeight: 400, minWidth: 400}}>
+        <Box ref={setNodeRef}
+            sx={{
+                backgroundColor: green,
+                height: '100%',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: 0
+            }}>
             <Typography variant="h4">{t("dayPlanner.targetLabel")}</Typography>
+
+            <Divider
+                sx={{ mb: 1, mt: 1 }}
+            />
+
             <SortableContext items={targetList} strategy={verticalListSortingStrategy}>
-                {targetList.length === 0 ? 
+                {targetList.length === 0 ?
                     <Box
                         sx={{
                             display: 'flex',
@@ -67,10 +80,20 @@ export default function ItemTargetList({ targetList, listId, setTargetList, remo
                             <Typography>{t("dayPlanner.targetPlaceholder")}</Typography>
                         </Paper>
                     </Box>
-                :
-                    targetList.map(item => (
-                        <ItemCard item={item} listId={listId} key={item.id} handleAmountChange={handleAmountChange} contextualDelete={removeRow}/>
-                    ))}
+                    :
+                    <Box
+                        sx={{
+                            flex: 1,
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                            padding: 1
+                        }}
+                    >
+                        {targetList.map(item => (
+                            <ItemCard item={item} listId={listId} key={item.id} handleAmountChange={handleAmountChange} contextualDelete={removeRow} />
+                        ))}
+                    </Box>
+                }
             </SortableContext>
         </Box>
     )

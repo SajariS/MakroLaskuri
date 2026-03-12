@@ -41,7 +41,6 @@ export default function LangProvider({ children }: LangProviderProps) {
     useEffect(() => {
         const initLang = async() => {
             const settings = await getSettings()
-            console.log(settings)
             if (!settings) {
                 const defaultSettings = createDefaultSettings()
                 await setSettings(defaultSettings)

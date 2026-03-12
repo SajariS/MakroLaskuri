@@ -4,10 +4,11 @@ import { Box, Typography } from "@mui/material";
 import { AnimatePresence, motion } from "motion/react";
 import DayPlanner from "./DayPlanner";
 import { Testi } from "./Testi";
+import Faq from "./Faq";
 
 type pageByTabType = { tab: TabId }
 
-const tabOrder: TabId[] = ['DayPlanner', 'Testi']
+const tabOrder: TabId[] = ['DayPlanner', 'Faq']
 
 function usePrevious<T>(value: T): T | undefined {
     const ref = useRef<T | undefined>(undefined)
@@ -22,11 +23,16 @@ export default function PageContainer() {
     const { tab } = useTabs()
     const prevTab = usePrevious(tab)
 
-    const direction = prevTab && tabOrder.indexOf(tab) > tabOrder.indexOf(prevTab) ? 1 : -1
+    const direction =
+        prevTab === undefined
+            ? 0
+            : prevTab && tabOrder.indexOf(tab) > tabOrder.indexOf(prevTab)
+                ? 1
+                : -1
 
     const pageVariants = {
         enter: (direction: number) => ({
-            x: direction > 0 ? '100%' : '-100%',
+            x: direction === 0 ? 0 : direction > 0 ? '100%' : '-100%',
             opacity: 0,
             position: 'absolute'
         }),
@@ -36,7 +42,7 @@ export default function PageContainer() {
             position: 'relative'
         },
         exit: (direction: number) => ({
-            x: direction > 0 ? '-100%': '100%',
+            x: direction === 0 ? 0 : direction > 0 ? '-100%': '100%',
             opacity: 0,
             position: 'absolute'
         })
@@ -47,8 +53,8 @@ export default function PageContainer() {
         switch (tab) {
             case 'DayPlanner':
                 return <DayPlanner />
-            case 'Testi':
-                return <Testi />
+            case 'Faq':
+                return <Faq />
             default:
                 console.log("Default case TESTI")
                 return null
@@ -57,7 +63,7 @@ export default function PageContainer() {
 
     return(
         <Box sx={{ position: 'relative', overflow: 'hidden'}}>
-            <AnimatePresence mode="wait" custom={direction}>
+            <AnimatePresence mode="sync" custom={direction}>
                 <motion.div
                     key={tab}
                     custom={direction}

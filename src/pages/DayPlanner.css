@@ -1,6 +1,5 @@
 .pageRoot {
-  height: 100%;
-  width: 100%;
+  height: 90vh;
   padding: 16px;
   box-sizing: border-box;
 }
@@ -16,6 +15,7 @@
 .column {
   display: flex;
   flex-direction: column;
+  min-height: 0;
   border: 1px solid var(--mui-palette-divider, #e0e0e0);
   border-radius: 8px;
   padding: 8px;
@@ -33,13 +33,6 @@
 .columnHeader {
   font-weight: 500;
   margin-bottom: 8px;
-}
-
-/* Scrollattava lista */
-.listContainer {
-  flex: 1;
-  /*overflow-y: auto; */
-  padding-right: 4px;
 }
 
 /* Responsiivisuus */

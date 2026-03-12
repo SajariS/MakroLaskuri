@@ -6,7 +6,6 @@ export function sortList(list: FoodItem[], key: FoodItemKey, direction: boolean)
     const isNonNumberic = (value: unknown): boolean => {
         return typeof value !== "number"
     }
-    console.log("Recieved inversion: " + direction)
     if (list[0][key] !== null && Number.isNaN(Number(list[0][key]))) {
         return list.sort((a, b) => {
             /*if (String(a[key]).toUpperCase() > String(b[key]).toUpperCase()) return direction ? -1 : 1

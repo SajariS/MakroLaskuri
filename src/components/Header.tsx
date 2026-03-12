@@ -1,14 +1,18 @@
-import { AppBar, Box, IconButton, Menu, MenuItem, Tab, Tabs, Toolbar } from "@mui/material";
+import { AppBar, Box, IconButton, Menu, MenuItem, Tab, Tabs, Toolbar, useTheme } from "@mui/material";
 import LanguageIcon from "@mui/icons-material/Language"
-import SettingsIcon from "@mui/icons-material/Settings"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useTabs, type TabId } from "../context/TabsContext";
+import { LangContext } from "../context/LangContext";
 
 const TABS_KEY = 'tabs'
 
 export default function Header() {
+    const theme = useTheme()
+    const { texts, changeLang, lang } = useContext(LangContext)
+    const t = (key: string) => texts?.[key ?? key]
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
     const { tab, setTab } = useTabs()
+    const renderLang = ["fi", "en", "sv"]
 
     const handleOpenLangMenu = (e: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(e.currentTarget)
@@ -23,15 +27,30 @@ export default function Header() {
         localStorage.setItem(TABS_KEY, value)
     }
 
+    const handleLangChange = (value: string) => {
+        changeLang(value)
+        handleCloseLangMenu()
+    }
+
     return(
         <AppBar position="static">
             <Toolbar>
                 <Box sx={{ flex: 1}} />
 
                 <Toolbar sx={{ display: 'flex', gap: 2}}>
-                    <Tabs value={tab} onChange={(_, value) => handleTabChange(value)}>
-                        <Tab label="Home TODO!" value="DayPlanner" />
-                        <Tab label="Tab testi TODO!" value="Testi" />
+                    <Tabs 
+                        value={tab} 
+                        onChange={(_, value) => handleTabChange(value)}
+                        textColor="inherit"
+                        sx={{
+                            "& .MuiTabs-indicator": {
+                                backgroundColor: theme.palette.common.white,
+                                height: 3
+                            }
+                        }}
+                    >
+                        <Tab label={t("headerTabs.DayPlanner")} value="DayPlanner" />
+                        <Tab label={t("headerTabs.faq")} value="Faq" />
                     </Tabs>
                 </Toolbar>
 
@@ -41,14 +60,19 @@ export default function Header() {
                     </IconButton>
 
                     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseLangMenu}>
-                        <MenuItem onClick={() => console.log("TODO")}>Fi</MenuItem>
-                        <MenuItem onClick={() => console.log("TODO!")}>En</MenuItem>
-                        <MenuItem onClick={() => console.log("TODO")}>Sv</MenuItem>
+                        {renderLang.map((key) => (
+                            <MenuItem
+                                onClick={() => handleLangChange(key)}
+                                key={key}
+                                sx={{
+                                    backgroundColor: key === lang ? theme.palette.action.hover : "inherit"
+                                }}
+                            >
+                                {t(`langSelection.${key}`)}
+                            </MenuItem>
+                        ))}
                     </Menu>
 
-                    <IconButton color="inherit" onClick={() => console.log("TODO")}>
-                        <SettingsIcon />
-                    </IconButton>
                 </Box>
             </Toolbar>
         </AppBar>

@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Box, Chip, Collapse, Grid, List, ListItem, Paper, Switch, Tooltip, Typography } from "@mui/material";
+import { Box, Chip, Collapse, Divider, Grid, List, ListItem, Paper, Switch, Tooltip, Typography } from "@mui/material";
 import type { MacroKeys, Macros } from "../interfaces/Nutrition";
 import NumberSpinner from "./NumberSpinner";
 import type { Day } from "../interfaces/Day";
@@ -25,8 +25,6 @@ type Totals = {
 }
 
 type dynamicMacroKey = FoodItemNumberKey & MacroKeys
-
-const MotionDiv = motion.div
 
 export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCalcProps) {
     const macroKeys: dynamicMacroKey[] = ["kcal", "protein", "carbs", "sugar", "fat", "hardFat", "salt"]
@@ -83,135 +81,155 @@ export function MacroCalc({ day, handleLimitToggle, handleLimitChange }: MacroCa
     }
 
     return (
-        <Paper elevation={1}>
-            <Paper>
-                <Box>
-                    {macroKeys.map((key) => (
-                        <Grid 
-                        container spacing={1} 
-                        alignItems="center" 
-                        key={key} 
-                        sx={{ 
-                            minHeight: 50, 
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                minHeight: 0
+            }}
+        >
+            <Box
+                sx={{
+                    pb: 1
+                }}
+            >
+                {macroKeys.map((key) => (
+                    <Grid
+                        container spacing={1}
+                        alignItems="center"
+                        key={key}
+                        sx={{
+                            minHeight: 50,
                             transition: 'background-color 150ms ease',
                             "&:hover": {
                                 backgroundColor: 'action.hover'
                             }
                         }}>
-                            <Grid size={3}>
-                                <Typography>{t(`macros.${key}`)}</Typography>
-                            </Grid>
-                            <Grid size={3}>
-                                <Box
+                        <Grid size={3}>
+                            <Typography>{t(`macros.${key}`)}</Typography>
+                        </Grid>
+                        <Grid size={3}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Typography>{day.totalMacros[key]}</Typography>
+                                <Collapse
+                                    in={checkLimitToggle(key)}
+                                    orientation="horizontal"
                                     sx={{
-                                        display: 'flex',
-                                        justifyContent: 'flex-end',
-                                        alignItems: 'center',
+                                        overflow: 'hidden',
+                                        display: 'inline-block',
+                                        verticalAlign: 'middle'
                                     }}
                                 >
-                                    <Typography>{day.totalMacros[key]}</Typography>
-                                    <Collapse
-                                        in={checkLimitToggle(key)}
-                                        orientation="horizontal"
-                                        sx={{ 
-                                            overflow: 'hidden',
-                                            display: 'inline-block',
-                                            verticalAlign: 'middle'
-                                        }}
-                                    >
-                                        <Typography sx={{ whiteSpace: 'nowrap' }}>
-                                            {" / "}
-                                            {day.macroLimits[key]}
-                                        </Typography>
-                                    </Collapse>
-                                </Box>
-                            </Grid>
-                            <Grid size={1}>
-                                <Collapse
-                                    in={checkLimitToggle(key)}
-                                    orientation="horizontal"
-                                >
-                                    {renderPercentage(day.macroLimits[key], day.totalMacros[key])}
+                                    <Typography sx={{ whiteSpace: 'nowrap' }}>
+                                        {" / "}
+                                        {day.macroLimits[key]}
+                                    </Typography>
                                 </Collapse>
-                            </Grid>
-                            <Grid size={2}>
-                                <Switch
-                                    checked={checkLimitToggle(key)}
-                                    onChange={() => handleLimitToggle(key)}
-                                />
-                            </Grid>
-                            <Grid size={3}>
-                                <Collapse
-                                    in={checkLimitToggle(key)}
-                                    orientation="horizontal"
-                                >
-                                    <NumberSpinner
-                                        min={0}
-                                        size="small"
-                                        value={day.macroLimits[key]}
-                                        onValueChange={(value) => handleLimitChange(key, value ?? 0)}
-                                    />
-                                </Collapse>
-                            </Grid>
+                            </Box>
                         </Grid>
-                    ))}
-                </Box>
+                        <Grid size={1}>
+                            <Collapse
+                                in={checkLimitToggle(key)}
+                                orientation="horizontal"
+                            >
+                                {renderPercentage(day.macroLimits[key], day.totalMacros[key])}
+                            </Collapse>
+                        </Grid>
+                        <Grid size={2}>
+                            <Switch
+                                checked={checkLimitToggle(key)}
+                                onChange={() => handleLimitToggle(key)}
+                            />
+                        </Grid>
+                        <Grid size={3}>
+                            <Collapse
+                                in={checkLimitToggle(key)}
+                                orientation="horizontal"
+                            >
+                                <NumberSpinner
+                                    min={0}
+                                    size="small"
+                                    value={day.macroLimits[key]}
+                                    onValueChange={(value) => handleLimitChange(key, value ?? 0)}
+                                />
+                            </Collapse>
+                        </Grid>
+                    </Grid>
+                ))}
+            </Box>
 
-            </Paper>
-            <Paper>
-                <Box display="flex" gap={1} flexWrap="wrap">
-                    {macroKeys.map((key) => (
-                        <Chip
-                            key={key}
-                            label={t(`macros.${key}`)}
-                            clickable={listKey !== key}
-                            variant={listKey === key ? 'filled': 'outlined'}
-                            onClick={() => setListKey(key)}
-                            size="small"
+            <Divider
+                sx={{ mb: 1 }}
+            />
 
-                        />
-                    ))}
-                </Box>
-                <MotionDiv layout>
+            <Box display="flex" gap={1} flexWrap="wrap">
+                {macroKeys.map((key) => (
+                    <Chip
+                        key={key}
+                        label={t(`macros.${key}`)}
+                        clickable={listKey !== key}
+                        variant={listKey === key ? 'filled' : 'outlined'}
+                        onClick={() => setListKey(key)}
+                        size="small"
+
+                    />
+                ))}
+            </Box>
+            <Box
+                component={motion.div}
+                layout
+                sx={{
+                    flex: 1,
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                    minHeight: 0,
+                    pr: 0.5,
+                    pt: 0.5
+                }}
+            >
                 <List>
                     {listData.map((item) => (
-                        <MotionDiv
+                        <ListItem
                             key={item.id}
+                            component={motion.div}
                             layout="position"
-                        >
-                            <ListItem 
-                                sx={{ 
-                                    justifyContent: 'flex-start',
-                                    "&:hover": {
-                                        backgroundColor: 'action.hover'
-                                    },
-                                    
-                                }}>
-                                <Grid container alignItems="center" spacing={2} sx={{ width: '100%'}}>
-                                    <Grid size={2}>
-                                        <Tooltip
-                                            title={t("calcList.toolTip")}
-                                            placement="right"
-                                        >
-                                            <Chip 
-                                                label={`${item.percent}%`}
-                                            />
-                                        </Tooltip>
-                                    </Grid>
-                                    <Grid size={2}>
-                                        <Typography>{item.name}</Typography>
-                                    </Grid>
-                                    <Grid size={5} textAlign="right">
-                                        <Typography color="text.secondary">{item.displayValue}</Typography>
-                                    </Grid>
+                            sx={{
+                                justifyContent: 'flex-start',
+                                "&:hover": {
+                                    backgroundColor: 'action.hover'
+                                },
+
+                            }}>
+                            <Grid container alignItems="center" spacing={2} sx={{ width: '100%' }}>
+                                <Grid size={2}>
+                                    <Tooltip
+                                        title={t("calcList.toolTip")}
+                                        placement="right"
+                                    >
+                                        <Chip
+                                            label={`${item.percent}%`}
+                                        />
+                                    </Tooltip>
                                 </Grid>
-                            </ListItem>
-                        </MotionDiv>
+                                <Grid size={2}>
+                                    <Typography>{item.name}</Typography>
+                                </Grid>
+                                <Grid size={5} textAlign="right">
+                                    <Typography color="text.secondary">{item.displayValue}</Typography>
+                                </Grid>
+                            </Grid>
+                        </ListItem>
                     ))}
                 </List>
-                </MotionDiv>
-            </Paper>
-        </Paper>
+            </Box>
+        </Box>
     )
 
 }

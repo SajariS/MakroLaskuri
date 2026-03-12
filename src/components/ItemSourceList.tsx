@@ -1,5 +1,5 @@
 import { useContext, useDeferredValue, useEffect, useRef, useState } from "react";
-import { Box, Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, TextField } from "@mui/material";
+import { Box, Button, ButtonGroup, ClickAwayListener, Divider, Grow, MenuItem, MenuList, Paper, Popper, TextField } from "@mui/material";
 import { sortList } from "../services/sortList";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -57,10 +57,7 @@ export default function ItemSourceList({sourceList, malleableList, setMalleableL
             sortOptions[index === undefined ? sortIndex : index].key, 
             inversion === undefined ? sortInversion : inversion
         ) as FoodItem[]
-        console.log(sortedList)
         setMalleableList(sortedList)
-        console.log("Manual Inversion: " + inversion)
-        console.log("Sort inversion: " + sortInversion)
 
         if (inversion === undefined) {
             setSortInversion((prev) => !prev)
@@ -113,68 +110,88 @@ export default function ItemSourceList({sourceList, malleableList, setMalleableL
     if (!texts) return <p>Loading...</p>
 
     return (
-        <Box>
-            <Button
-                size="small"
-                onClick={() => setAddDia(true)}
+        <Box
+            sx={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: 0
+            }}
+        >
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    mb: 1
+                }}
             >
-                {t("dayPlanner.addButton")}
-            </Button>
-            <TextField 
-                value={search}
-                onChange={handleChange}
-                placeholder={t("dayPlanner.searchPlaceholder")}
-            />
-            <ButtonGroup
-                variant="contained"
-                ref={anchorRef}
-            >
-                <Button onClick={() => handleSortEvent()}>{sortOptions[sortIndex].i18n}</Button>
                 <Button
+                    variant="contained"
                     size="small"
-                    onClick={handleSortToggle}
+                    onClick={() => setAddDia(true)}
                 >
-                    <ArrowDropDownIcon />
+                    {t("dayPlanner.addButton")}
                 </Button>
-            </ButtonGroup>
-            <Popper
-                sx={{ zIndex: 1}}
-                open={sortOpen}
-                anchorEl={anchorRef.current}
-                role={undefined}
-                transition
-                disablePortal
-            >
-                {({ TransitionProps, placement}) => (
-                    <Grow
-                        {...TransitionProps}
-                        style={{
-                            transformOrigin: placement === "bottom" ? "center top" : "center bottom"
-                        }}
+                <TextField
+                    value={search}
+                    onChange={handleChange}
+                    placeholder={t("dayPlanner.searchPlaceholder")}
+                />
+                <ButtonGroup
+                    variant="contained"
+                    ref={anchorRef}
+                >
+                    <Button onClick={() => handleSortEvent()}>{sortOptions[sortIndex].i18n}</Button>
+                    <Button
+                        size="small"
+                        onClick={handleSortToggle}
                     >
-                        <Paper>
-                            <ClickAwayListener onClickAway={handleClose}>
-                                <MenuList id="split-button-menu" autoFocusItem>
-                                    {sortOptions.map((option, index) => (
-                                        <MenuItem
-                                            key={index}
-                                            selected={index === sortIndex}
-                                            onClick={() => handleSortMenuClick(index)}
-                                        >
-                                            {option.i18n}
-                                        </MenuItem>
-                                    ))}
-                                </MenuList>
-                            </ClickAwayListener>
-                        </Paper>
-                    </Grow>
-                )}
-            </Popper>
+                        <ArrowDropDownIcon />
+                    </Button>
+                </ButtonGroup>
+                <Popper
+                    sx={{ zIndex: 1 }}
+                    open={sortOpen}
+                    anchorEl={anchorRef.current}
+                    role={undefined}
+                    transition
+                    disablePortal
+                >
+                    {({ TransitionProps, placement }) => (
+                        <Grow
+                            {...TransitionProps}
+                            style={{
+                                transformOrigin: placement === "bottom" ? "center top" : "center bottom"
+                            }}
+                        >
+                            <Paper>
+                                <ClickAwayListener onClickAway={handleClose}>
+                                    <MenuList id="split-button-menu" autoFocusItem>
+                                        {sortOptions.map((option, index) => (
+                                            <MenuItem
+                                                key={index}
+                                                selected={index === sortIndex}
+                                                onClick={() => handleSortMenuClick(index)}
+                                            >
+                                                {option.i18n}
+                                            </MenuItem>
+                                        ))}
+                                    </MenuList>
+                                </ClickAwayListener>
+                            </Paper>
+                        </Grow>
+                    )}
+                </Popper>
+            </Box>
+            
+            <Divider/>
+
             <Box ref={setNodeRef}
                 sx={{
-                    height: 800,
+                    flex: 1,
                     overflowY: 'auto',
-                    border: '1px solid gray',
+                    overflowX: 'hidden',
                     padding: 1
             }}>
                 <SortableContext items={malleableList} strategy={verticalListSortingStrategy}>

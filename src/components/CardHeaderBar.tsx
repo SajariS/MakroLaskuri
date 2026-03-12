@@ -30,8 +30,8 @@ export default function CardHeaderBar({ title, listeners, attributes, isMeal, ha
                 borderColor: 'divider',
                 userSelect: 'none',
                 background: isMeal ?
-                    `linear-gradient(90deg, transparent 0%, ${theme.palette.info.main}40 60%)` :
-                    `linear-gradient(90deg, transparent 0%, ${theme.palette.success.main}40 60%)`
+                    `linear-gradient(90deg, transparent 0%, ${theme.palette.success.main}40 60%)` :
+                    `linear-gradient(90deg, transparent 0%, ${theme.palette.info.main}40 60%)`
             }}
         >
             <Grid

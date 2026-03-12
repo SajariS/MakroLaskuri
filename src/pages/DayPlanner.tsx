@@ -96,8 +96,6 @@ export default function DayPlanner() {
 
     const handleTargetChange = (newList: FoodItem[]) => {
         const newTotals = handleTotalSum(newList)
-        console.log(newList)
-        console.log(newTotals)
         setDay({...day, meals: newList, totalMacros: newTotals})
     }
 
@@ -133,18 +131,14 @@ export default function DayPlanner() {
 
     const handleDragStart = (e:DragStartEvent) => {
         const dragData = e.active.data.current
-        console.log(dragData?.item)
         setDragItem(!dragData ? null : dragData.item as FoodItem)
         // Voi olla turha kohta kokonaan, riippuu miten dnd etenee
         if (!dragData || dragData.type !== "item") return
-
-        console.log("Drag start:" + dragData.originId)
     }
 
     const handleDragEnd = (e: DragEndEvent) => {
         setDragItem(null)
         const { active, over } = e
-        console.log(`Dragend. active: ${active.id}, target: ${over?.id}, targetType: ${over?.data.current?.type}`)
         if (!over || !targetRef || !sourceRef) return
         const dragSource = active.data.current?.originId
         const targetId = over.id
@@ -221,7 +215,6 @@ export default function DayPlanner() {
     const handleAddItem = (newItem: FoodItem) => {
         (mealHandler.isMeal(newItem) ? mealHandler.add(newItem) : drinkHandler.add(newItem))
         .then(() => {
-            console.log("Lisäys ok")
             setSourceList([...sourceList, newItem])
             setMalleableList([...malleableList, newItem])
         })
