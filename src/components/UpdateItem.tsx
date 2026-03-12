@@ -12,6 +12,7 @@ type UpdateItemProps = {
     handleSave: (newItem: FoodItem) => void
 }
 
+// @ts-ignore
 export default function UpdateItem({ item, setToggle, handleSave }: UpdateItemProps) {
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]

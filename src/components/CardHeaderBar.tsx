@@ -1,4 +1,4 @@
-import { Box, Grid, IconButton, Tooltip, Typography, useTheme } from "@mui/material"
+import { Grid, IconButton, Tooltip, Typography, useTheme } from "@mui/material"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import { useContext } from "react"

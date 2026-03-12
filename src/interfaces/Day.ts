@@ -1,7 +1,6 @@
 import type { Drink } from "./Drink"
 import type { Meal } from "./Meal"
 import type { Macros } from "./Nutrition"
-import type { Recipe } from "./Recipe"
 
 // snippets for days of week, actual text will be fetched by provider.
 type Weekday = "ma" | "ti" | "ke" | "to" | "pe" | "la" | "su"

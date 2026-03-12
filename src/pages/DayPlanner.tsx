@@ -1,6 +1,6 @@
-import { Box, Dialog, Typography } from "@mui/material";
+import { Box, Dialog } from "@mui/material";
 import './DayPlanner.css'
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mealHandler } from "../services/mealHandler";
 import { drinkHandler } from "../services/drinkHandler";
 import { sortList } from "../services/sortList";
@@ -13,16 +13,13 @@ import type { Macros } from "../interfaces/Nutrition";
 import AddItem from "../components/AddItem";
 import type { FoodItem } from "../interfaces/FoodItem";
 import DragCard from "../components/DragCard";
-import { LangContext } from "../context/LangContext";
 
 const LIST_IDS = {
     SOURCE: 'source',
     TARGET: 'target'
 }
 
-export default function DayPlanner() {
-    const { texts } = useContext(LangContext)
-    const t = (key: string) => texts?.[key ?? key]    
+export default function DayPlanner() {   
     const [sourceList, setSourceList] = useState<FoodItem[]>([])
     const [malleableList, setMalleableList] = useState<FoodItem[]>([])
     const sourceRef = useRef<HTMLDivElement | null>(null)
@@ -281,7 +278,6 @@ export default function DayPlanner() {
                         sourceList={sourceList} 
                         malleableList={malleableList} 
                         setMalleableList={handleMalleableList} 
-                        listRef={sourceRef}
                         setAddDia={setAddDialog}
                         search={search}
                         setSearch={setSearch}

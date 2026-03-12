@@ -14,7 +14,6 @@ type ItemSourceListProps = {
     setMalleableList: (list: FoodItem[]) => void
     setAddDia: (state: boolean) => void
     listId: string
-    listRef: React.RefObject<HTMLDivElement | null>
     search: string
     setSearch: (keyword: string) => void
     removeRow: (item: FoodItem) => void
@@ -25,7 +24,7 @@ type optionsType = {
     key: FoodItemKey
 }
 
-export default function ItemSourceList({sourceList, malleableList, setMalleableList, listId, listRef, setAddDia, search, setSearch, removeRow}: ItemSourceListProps) {
+export default function ItemSourceList({sourceList, malleableList, setMalleableList, listId, setAddDia, search, setSearch, removeRow}: ItemSourceListProps) {
     const [sortOpen, setSortOpen] = useState<boolean>(false)
     const anchorRef = useRef<HTMLDivElement>(null)
     const [sortIndex, setSortIndex] = useState<number>(1)
@@ -88,11 +87,6 @@ export default function ItemSourceList({sourceList, malleableList, setMalleableL
         }
 
     })
-
-    const setRefs = (node: HTMLDivElement | null) => {
-        listRef.current = node
-        setNodeRef(node)
-    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value)

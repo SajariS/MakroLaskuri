@@ -1,9 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useTabs, type TabId } from "../context/TabsContext";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { AnimatePresence, motion } from "motion/react";
 import DayPlanner from "./DayPlanner";
-import { Testi } from "./Testi";
 import Faq from "./Faq";
 
 type pageByTabType = { tab: TabId }

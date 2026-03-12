@@ -3,9 +3,6 @@ import type { FoodItem, FoodItemKey } from "../interfaces/FoodItem"
 
   //Avain oliosta jolla sortataan ja normaali(true)/käänteinen(false) sort
 export function sortList(list: FoodItem[], key: FoodItemKey, direction: boolean) {
-    const isNonNumberic = (value: unknown): boolean => {
-        return typeof value !== "number"
-    }
     if (list[0][key] !== null && Number.isNaN(Number(list[0][key]))) {
         return list.sort((a, b) => {
             /*if (String(a[key]).toUpperCase() > String(b[key]).toUpperCase()) return direction ? -1 : 1
