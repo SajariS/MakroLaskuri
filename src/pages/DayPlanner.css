@@ -1,0 +1,43 @@
+.pageRoot {
+  height: 90vh;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  height: 100%;
+}
+
+/* Yleinen pylväs */
+.column {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--mui-palette-divider, #e0e0e0);
+  border-radius: 8px;
+  padding: 8px;
+  /*overflow: hidden; */
+  background-color: var(--mui-palette-background-paper, #fff);
+}
+
+/* Keskipylväs */
+.column.center {
+  align-items: start;
+  justify-content: normal;
+  opacity: 0.6;
+}
+
+.columnHeader {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+/* Responsiivisuus */
+@media (max-width: 900px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}
