@@ -1,6 +1,7 @@
 import { Grid, IconButton, Tooltip, Typography, useTheme } from "@mui/material"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
+import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline"
 import { useContext } from "react"
 import { LangContext } from "../context/LangContext"
 
@@ -10,10 +11,11 @@ type cardHeaderBarProps = {
     attributes: any
     isMeal: boolean
     handleRemove: () => void
+    handleEdit: () => void
     context: string
 }
 
-export default function CardHeaderBar({ title, listeners, attributes, isMeal, handleRemove, context}: cardHeaderBarProps) {
+export default function CardHeaderBar({ title, listeners, attributes, isMeal, handleRemove, handleEdit, context}: cardHeaderBarProps) {
     const theme = useTheme()
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]
@@ -58,6 +60,9 @@ export default function CardHeaderBar({ title, listeners, attributes, isMeal, ha
             </Grid>
             
             <Grid size="grow">
+                <IconButton onClick={handleEdit}>
+                    <ModeEditOutlineIcon fontSize="small" />
+                </IconButton>
                 <Tooltip
                     title={context === "target" ? t("itemCard.removeTarget"): t("itemCard.removeSource")}
                     placement="left"

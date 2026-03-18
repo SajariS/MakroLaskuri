@@ -250,6 +250,11 @@ export default function DayPlanner() {
         }
     }
 
+    const handleEditEvent = (item: FoodItem, listId: string) => {
+        console.log(item)
+        console.log(listId)
+    }
+
     useEffect(() => {
         const fetchLists = async() => {
             const mealList = await mealHandler.getAll()
@@ -267,21 +272,28 @@ export default function DayPlanner() {
             <Box className="pageRoot">
                 <Box className="columns">
                     <Box className="column">
-                        <ItemTargetList targetList={day.meals} listId={LIST_IDS.TARGET} setTargetList={handleTargetChange} removeRow={targetRowRemove}/>
+                        <ItemTargetList 
+                            targetList={day.meals} 
+                            listId={LIST_IDS.TARGET} 
+                            setTargetList={handleTargetChange} 
+                            removeRow={targetRowRemove}
+                            editEvent={handleEditEvent}
+                        />
                     </Box>
                     <Box className="column center">
                         <MacroCalc day={day} handleLimitToggle={handleLimitToggle} handleLimitChange={handleLimitChange}/>
                     </Box>
                     <Box className="column">
                         <ItemSourceList 
-                        listId={LIST_IDS.SOURCE} 
-                        sourceList={sourceList} 
-                        malleableList={malleableList} 
-                        setMalleableList={handleMalleableList} 
-                        setAddDia={setAddDialog}
-                        search={search}
-                        setSearch={setSearch}
-                        removeRow={sourceRowRemove}
+                            listId={LIST_IDS.SOURCE} 
+                            sourceList={sourceList} 
+                            malleableList={malleableList} 
+                            setMalleableList={handleMalleableList} 
+                            setAddDia={setAddDialog}
+                            search={search}
+                            setSearch={setSearch}
+                            removeRow={sourceRowRemove}
+                            editEvent={handleEditEvent}
                         />
                     </Box>
                 </Box>

@@ -2,24 +2,22 @@ import { useContext, useState } from "react"
 import type { FoodItem, FoodItemKey, FoodItemNumberKey } from "../interfaces/FoodItem"
 import { mealHandler } from "../services/mealHandler"
 import { handleConversion, type Unit } from "../services/calculations"
-import { Container, Grid, Paper, Typography } from "@mui/material"
+import { Box, Button, ButtonGroup, Container, Grid, Paper, TextField, Typography } from "@mui/material"
 import NumberSpinner from "./NumberSpinner"
 import { LangContext } from "../context/LangContext"
 
 type UpdateItemProps = {
     item: FoodItem
     setToggle: (state: boolean) => void
-    handleSave: (newItem: FoodItem) => void
+    handleEdit: (newItem: FoodItem) => void
 }
 
 // @ts-ignore
-export default function UpdateItem({ item, setToggle, handleSave }: UpdateItemProps) {
+export default function UpdateItem({ item, setToggle, handleEdit }: UpdateItemProps) {
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]
     const [updatedItem, setUpdatedItem] = useState(item ?? mealHandler.createDefault())
-    const isMeal = mealHandler.isMeal(updatedItem)
     const renderKeys: FoodItemNumberKey[] = ["kcal", "protein", "carbs", "sugar", "fat", "hardFat", "salt"]
-    const [unit, setUnit] = useState<Unit>(isMeal ? 'g' : 'l')
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUpdatedItem({ ...updatedItem, [e.target.name]: e.target.value })
@@ -29,14 +27,27 @@ export default function UpdateItem({ item, setToggle, handleSave }: UpdateItemPr
         setUpdatedItem({ ...updatedItem, [key]: value })
     }
 
-    const handleMeasureSpinner = (key: FoodItemKey, value: number) => {
-        const convertedValue = isMeal ? handleConversion(value, unit, "g") : handleConversion(value, unit, 'l')
-        setUpdatedItem({ ...updatedItem, [key]: convertedValue })
+    const handleCancel = () => {
+        setToggle(false)
+    }
+
+    const handleSave = () => {
+        
     }
 
     return (
         <Container>
-            <Typography variant="h2">Muokkaus TODO! i18n</Typography>
+            <Grid container sx={{ margin: 2, alignItems: 'center' }}>
+                <Grid size={6}>
+                    <TextField
+                        name="name"
+                        value={item.name}
+                        label={t("addItem.name")}
+                        onChange={handleChange}
+                        variant="standard"
+                    />
+                </Grid>
+            </Grid>
             <Paper>
                 {renderKeys.map((key, index) => (
                     <Grid
@@ -54,7 +65,7 @@ export default function UpdateItem({ item, setToggle, handleSave }: UpdateItemPr
                         <Grid size={6}>
                             <NumberSpinner
                                 name="key"
-                                value={updatedItem[key]}
+                                value={item[key]}
                                 onValueChange={(value) => handleSpinnerChange(key, value ?? 0)}
                                 size="small"
                                 min={0}
@@ -63,6 +74,23 @@ export default function UpdateItem({ item, setToggle, handleSave }: UpdateItemPr
                     </Grid>
                 ))}
             </Paper>
+
+            <Box
+                sx={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    display: 'flex'
+                }}
+            >
+                <ButtonGroup variant="contained">
+                    <Button onClick={handleSave} color="success">
+                        {t("common.save")}
+                    </Button>
+                    <Button onClick={handleCancel} color="error">
+                        {t("common.cancel")}
+                    </Button>
+                </ButtonGroup>
+                </Box>
         </Container>
     )
 }

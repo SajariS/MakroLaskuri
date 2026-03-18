@@ -2,6 +2,8 @@ import type { FoodItem, FoodItemKey } from "../interfaces/FoodItem"
 
 
   //Avain oliosta jolla sortataan ja normaali(true)/käänteinen(false) sort
+
+  // Korjaus käytön kanssa, varmista ettei kutsuta tyhjällä listalla
 export function sortList(list: FoodItem[], key: FoodItemKey, direction: boolean) {
     if (list[0][key] !== null && Number.isNaN(Number(list[0][key]))) {
         return list.sort((a, b) => {

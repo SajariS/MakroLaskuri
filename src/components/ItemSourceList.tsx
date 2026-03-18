@@ -17,6 +17,7 @@ type ItemSourceListProps = {
     search: string
     setSearch: (keyword: string) => void
     removeRow: (item: FoodItem) => void
+    editEvent: (item: FoodItem, listId: string) => void
 }
 
 type optionsType = {
@@ -24,7 +25,7 @@ type optionsType = {
     key: FoodItemKey
 }
 
-export default function ItemSourceList({sourceList, malleableList, setMalleableList, listId, setAddDia, search, setSearch, removeRow}: ItemSourceListProps) {
+export default function ItemSourceList({sourceList, malleableList, setMalleableList, listId, setAddDia, search, setSearch, removeRow, editEvent}: ItemSourceListProps) {
     const [sortOpen, setSortOpen] = useState<boolean>(false)
     const anchorRef = useRef<HTMLDivElement>(null)
     const [sortIndex, setSortIndex] = useState<number>(1)
@@ -45,12 +46,17 @@ export default function ItemSourceList({sourceList, malleableList, setMalleableL
         setSortOpen((prevState) => !prevState)
     }
 
+    const handleEdit = (item: FoodItem) => {
+        editEvent(item, listId)
+    }
+
     const handleSortEvent = (inversion?: boolean, index?: number ) => {
         // Valinnaiset param mukana koska tilamuuttja ei pysy perässä,
         // tapahtumassa jossa sort valitaan dropdown menusta
         // Kulku: Normaali - paina nappia -> sort + inversio toggle, uusi painallus -> inversio sort + inversio toggle
         // Suoraan menusta: - valtise sort -> sort + inversio toggle, uusin painallaus sen jälkeen kun valittu -> inversio sort + toggle,
         // uusi sort valinta menusta -> pakotettu normi sort + pakotettu tila inversioon
+        if (malleableList.length === 0) return
         const sortedList = sortList(
             malleableList, 
             sortOptions[index === undefined ? sortIndex : index].key, 
@@ -190,7 +196,7 @@ export default function ItemSourceList({sourceList, malleableList, setMalleableL
             }}>
                 <SortableContext items={malleableList} strategy={verticalListSortingStrategy}>
                     {malleableList.map(item => (
-                        <ItemCard item={item} listId={listId} key={item.id} contextualDelete={removeRow} />
+                        <ItemCard item={item} listId={listId} key={item.id} contextualDelete={removeRow} editEvent={handleEdit} />
                     ))}
                 </SortableContext>
             </Box>

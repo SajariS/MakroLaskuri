@@ -5,7 +5,7 @@ import type { Drink } from "../interfaces/Drink"
 import type { Meal } from "../interfaces/Meal"
 import { Box, Card, Collapse, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import CardHeaderBar from "./CardHeaderBar"
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
 import type { FoodItem, FoodItemNumberKey } from "../interfaces/FoodItem"
 import { LangContext } from "../context/LangContext"
 import NumberSpinner from "./NumberSpinner"
@@ -16,9 +16,10 @@ type itemCardProps = {
     listId: string | undefined
     handleAmountChange?: (item: FoodItem, amount: number) => void
     contextualDelete: (item: FoodItem) => void
+    editEvent: (item: FoodItem) => void
 }
 
-export default function ItemCard({ item, listId, handleAmountChange, contextualDelete }: itemCardProps) {
+export default function ItemCard({ item, listId, handleAmountChange, contextualDelete, editEvent }: itemCardProps) {
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]
     const [expanded, setExpanded] = useState<boolean>(false)
@@ -59,6 +60,10 @@ export default function ItemCard({ item, listId, handleAmountChange, contextualD
         contextualDelete(item)
     }
 
+    const handleEdit = () => {
+        editEvent(item)
+    }
+
     return(
         <Card 
             ref={setNodeRef}
@@ -82,6 +87,7 @@ export default function ItemCard({ item, listId, handleAmountChange, contextualD
                 attributes={attributes}
                 isMeal={isMeal}
                 handleRemove={handleDeleteClick}
+                handleEdit={handleEdit}
                 context={listId ?? ""}
             />
             
