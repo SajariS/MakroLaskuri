@@ -4,21 +4,24 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline"
 import { useContext } from "react"
 import { LangContext } from "../context/LangContext"
+import type { FoodItem } from "../interfaces/FoodItem"
+import { useEdit } from "../pages/DayPlanner"
 
 type cardHeaderBarProps = {
-    title: string
+    item: FoodItem
     listeners: any
     attributes: any
     isMeal: boolean
     handleRemove: () => void
-    handleEdit: () => void
     context: string
 }
 
-export default function CardHeaderBar({ title, listeners, attributes, isMeal, handleRemove, handleEdit, context}: cardHeaderBarProps) {
+export default function CardHeaderBar({ item, listeners, attributes, isMeal, handleRemove, context}: cardHeaderBarProps) {
     const theme = useTheme()
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]
+    const title = item.name
+    const { openEdit } = useEdit()
     
     return(
         <Grid
@@ -60,7 +63,7 @@ export default function CardHeaderBar({ title, listeners, attributes, isMeal, ha
             </Grid>
             
             <Grid size="grow">
-                <IconButton onClick={handleEdit}>
+                <IconButton onClick={() => openEdit(item)}>
                     <ModeEditOutlineIcon fontSize="small" />
                 </IconButton>
                 <Tooltip

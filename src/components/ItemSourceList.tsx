@@ -17,7 +17,6 @@ type ItemSourceListProps = {
     search: string
     setSearch: (keyword: string) => void
     removeRow: (item: FoodItem) => void
-    editEvent: (item: FoodItem, listId: string) => void
 }
 
 type optionsType = {
@@ -25,7 +24,7 @@ type optionsType = {
     key: FoodItemKey
 }
 
-export default function ItemSourceList({sourceList, malleableList, setMalleableList, listId, setAddDia, search, setSearch, removeRow, editEvent}: ItemSourceListProps) {
+export default function ItemSourceList({sourceList, malleableList, setMalleableList, listId, setAddDia, search, setSearch, removeRow }: ItemSourceListProps) {
     const [sortOpen, setSortOpen] = useState<boolean>(false)
     const anchorRef = useRef<HTMLDivElement>(null)
     const [sortIndex, setSortIndex] = useState<number>(1)
@@ -44,10 +43,6 @@ export default function ItemSourceList({sourceList, malleableList, setMalleableL
 
     const handleSortToggle = () => {
         setSortOpen((prevState) => !prevState)
-    }
-
-    const handleEdit = (item: FoodItem) => {
-        editEvent(item, listId)
     }
 
     const handleSortEvent = (inversion?: boolean, index?: number ) => {
@@ -196,7 +191,7 @@ export default function ItemSourceList({sourceList, malleableList, setMalleableL
             }}>
                 <SortableContext items={malleableList} strategy={verticalListSortingStrategy}>
                     {malleableList.map(item => (
-                        <ItemCard item={item} listId={listId} key={item.id} contextualDelete={removeRow} editEvent={handleEdit} />
+                        <ItemCard item={item} listId={listId} key={item.id} contextualDelete={removeRow} />
                     ))}
                 </SortableContext>
             </Box>

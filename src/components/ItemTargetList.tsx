@@ -15,10 +15,9 @@ type ItemTargetListProps = {
     listId: string
     setTargetList: (list: FoodItem[]) => void
     removeRow: (item: FoodItem) => void
-    editEvent: (item: FoodItem, listId: string) => void
 }
 
-export default function ItemTargetList({ targetList, listId, setTargetList, removeRow, editEvent }: ItemTargetListProps) {
+export default function ItemTargetList({ targetList, listId, setTargetList, removeRow }: ItemTargetListProps) {
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]      
     const { setNodeRef } = useDroppable({
@@ -38,10 +37,6 @@ export default function ItemTargetList({ targetList, listId, setTargetList, remo
         newList.splice(index, 1, newItem)
         setTargetList(targetList)
         
-    }
-
-    const handleEdit = (item: FoodItem) => {
-        editEvent(item, listId)
     }
 
     return(
@@ -101,7 +96,6 @@ export default function ItemTargetList({ targetList, listId, setTargetList, remo
                                 key={item.id}
                                 handleAmountChange={handleAmountChange} 
                                 contextualDelete={removeRow} 
-                                editEvent={handleEdit}
                             />
                         ))}
                     </Box>

@@ -16,10 +16,9 @@ type itemCardProps = {
     listId: string | undefined
     handleAmountChange?: (item: FoodItem, amount: number) => void
     contextualDelete: (item: FoodItem) => void
-    editEvent: (item: FoodItem) => void
 }
 
-export default function ItemCard({ item, listId, handleAmountChange, contextualDelete, editEvent }: itemCardProps) {
+export default function ItemCard({ item, listId, handleAmountChange, contextualDelete }: itemCardProps) {
     const { texts } = useContext(LangContext)
     const t = (key: string) => texts?.[key ?? key]
     const [expanded, setExpanded] = useState<boolean>(false)
@@ -60,10 +59,6 @@ export default function ItemCard({ item, listId, handleAmountChange, contextualD
         contextualDelete(item)
     }
 
-    const handleEdit = () => {
-        editEvent(item)
-    }
-
     return(
         <Card 
             ref={setNodeRef}
@@ -82,12 +77,11 @@ export default function ItemCard({ item, listId, handleAmountChange, contextualD
         >
         
             <CardHeaderBar
-                title={item.name}
+                item={item}
                 listeners={listeners}
                 attributes={attributes}
                 isMeal={isMeal}
                 handleRemove={handleDeleteClick}
-                handleEdit={handleEdit}
                 context={listId ?? ""}
             />
             

@@ -1,6 +1,6 @@
 import { Box, Dialog } from "@mui/material";
 import './DayPlanner.css'
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { mealHandler } from "../services/mealHandler";
 import { drinkHandler } from "../services/drinkHandler";
 import { sortList } from "../services/sortList";
@@ -17,6 +17,20 @@ import DragCard from "../components/DragCard";
 const LIST_IDS = {
     SOURCE: 'source',
     TARGET: 'target'
+}
+
+type EditContext = {
+    editItem: FoodItem | null
+    openEdit: (item: FoodItem) => void
+    closeEdit: () => void
+}
+
+const EditContext = createContext<EditContext | null>(null)
+
+export const useEdit = () => {
+    const context = useContext(EditContext)
+    if (!context) throw new Error("useEdit must be used inside provider!")
+    return context
 }
 
 export default function DayPlanner() {   
@@ -61,6 +75,14 @@ export default function DayPlanner() {
         kcalLimit: false,
         saltLimit: false
     })
+
+    const [editItem, setEditItem] = useState<FoodItem | null>(null)
+
+    const openEdit = (item: FoodItem) => {
+        setEditItem(item)
+        console.log(item)
+    }
+    const closeEdit = () => setEditItem(null)
 
     const handleTotalSum = (items: FoodItem[]): Macros => {
         const totals = items.reduce((acc, item) => {
@@ -147,32 +169,6 @@ export default function DayPlanner() {
                 handleTargetAdd(active.data.current?.item)
                 return
             }
-            /*
-            else if (targetId === dragSource && targetId === LIST_IDS.SOURCE) {
-                // Sort tapahtuma jos over = lista ja lista on source
-                // Käyttää useRef päättelemään onko dragend over elementin ylä vai alapäässä
-                // tämän perusteella aktiivinen drag olio siirretään joko listan ylä tai alapäähän
-
-                const activeIndex = malleableList.findIndex(item => item.id === active.data.current?.id)
-                let newIndex: number | null = null
-
-                const rect = sourceRef.current?.getBoundingClientRect()
-                const y = (e.activatorEvent as MouseEvent).clientY
-                
-                if (rect && y < rect.top) {
-                    newIndex = 0
-                }
-                else if (rect && y > rect.bottom) {
-                    newIndex = malleableList.length - 1
-                }
-
-                if (newIndex === null || activeIndex === newIndex) return
-
-                const next = [...malleableList]
-                const [moved] = next.splice(activeIndex, 1)
-                next.splice(newIndex, 0, moved)
-                setMalleableList(next)
-            } */
         }
         else if (targetType === "item") {
             const targetOriginId = over.data.current?.originId
@@ -269,50 +265,50 @@ export default function DayPlanner() {
 
     return(
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <Box className="pageRoot">
-                <Box className="columns">
-                    <Box className="column">
-                        <ItemTargetList 
-                            targetList={day.meals} 
-                            listId={LIST_IDS.TARGET} 
-                            setTargetList={handleTargetChange} 
-                            removeRow={targetRowRemove}
-                            editEvent={handleEditEvent}
-                        />
-                    </Box>
-                    <Box className="column center">
-                        <MacroCalc day={day} handleLimitToggle={handleLimitToggle} handleLimitChange={handleLimitChange}/>
-                    </Box>
-                    <Box className="column">
-                        <ItemSourceList 
-                            listId={LIST_IDS.SOURCE} 
-                            sourceList={sourceList} 
-                            malleableList={malleableList} 
-                            setMalleableList={handleMalleableList} 
-                            setAddDia={setAddDialog}
-                            search={search}
-                            setSearch={setSearch}
-                            removeRow={sourceRowRemove}
-                            editEvent={handleEditEvent}
-                        />
+            <EditContext.Provider value={{ editItem, openEdit, closeEdit }}>
+                <Box className="pageRoot">
+                    <Box className="columns">
+                        <Box className="column">
+                            <ItemTargetList 
+                                targetList={day.meals} 
+                                listId={LIST_IDS.TARGET} 
+                                setTargetList={handleTargetChange} 
+                                removeRow={targetRowRemove}
+                            />
+                        </Box>
+                        <Box className="column center">
+                            <MacroCalc day={day} handleLimitToggle={handleLimitToggle} handleLimitChange={handleLimitChange}/>
+                        </Box>
+                        <Box className="column">
+                            <ItemSourceList 
+                                listId={LIST_IDS.SOURCE} 
+                                sourceList={sourceList} 
+                                malleableList={malleableList} 
+                                setMalleableList={handleMalleableList} 
+                                setAddDia={setAddDialog}
+                                search={search}
+                                setSearch={setSearch}
+                                removeRow={sourceRowRemove}
+                            />
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
-            <Dialog
-                open={addDialog}
-                onClose={() => setAddDialog(false)}
-            >
-                <AddItem 
-                    setToggle={setAddDialog}
-                    handleAdd={handleAddItem}
-                />
-            </Dialog>
-            <DragOverlay>
-                {dragItem ?
-                    <DragCard item={dragItem} />
-                    : null
-                }
-            </DragOverlay>
+                <Dialog
+                    open={addDialog}
+                    onClose={() => setAddDialog(false)}
+                >
+                    <AddItem 
+                        setToggle={setAddDialog}
+                        handleAdd={handleAddItem}
+                    />
+                </Dialog>
+                <DragOverlay>
+                    {dragItem ?
+                        <DragCard item={dragItem} />
+                        : null
+                    }
+                </DragOverlay>
+            </EditContext.Provider>
         </DndContext>
     )
 }
