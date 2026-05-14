@@ -302,6 +302,12 @@ export default function DayPlanner() {
                         handleAdd={handleAddItem}
                     />
                 </Dialog>
+                <Dialog
+                    open={editItem !== null}
+                    onClose={() => closeEdit()}
+                >
+                    
+                </Dialog>
                 <DragOverlay>
                     {dragItem ?
                         <DragCard item={dragItem} />
