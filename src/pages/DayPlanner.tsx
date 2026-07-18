@@ -13,6 +13,7 @@ import type { Macros } from "../interfaces/Nutrition";
 import AddItem from "../components/AddItem";
 import type { FoodItem } from "../interfaces/FoodItem";
 import DragCard from "../components/DragCard";
+import FoodItemDialog from "../components/FoodItemDialog";
 
 const LIST_IDS = {
     SOURCE: 'source',
@@ -306,7 +307,11 @@ export default function DayPlanner() {
                     open={editItem !== null}
                     onClose={() => closeEdit()}
                 >
-                    
+                    <FoodItemDialog 
+                        initialData={editItem ?? undefined}
+                        onClose={closeEdit}
+                        onSave={() => console.log("Todo save")}
+                    />
                 </Dialog>
                 <DragOverlay>
                     {dragItem ?
