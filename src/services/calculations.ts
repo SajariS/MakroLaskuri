@@ -67,3 +67,18 @@ export function handleConversion(value: number, from: Unit, to: Unit) {
       return base;
   }
 }
+
+type FoodItemType = "meal" | "drink"
+
+export function calculateMacrosPer100(totalMacros: Macros, totalAmount: number, type: FoodItemType): Macros {
+  const factor = type === 'drink' ? totalAmount / 10 : totalAmount / 100
+  return {
+    protein: totalMacros.protein / factor,
+    carbs: totalMacros.carbs / factor,
+    sugar: totalMacros.sugar / factor,
+    fat: totalMacros.fat / factor,
+    hardFat: totalMacros.hardFat / factor,
+    kcal: totalMacros.kcal / factor,
+    salt: totalMacros.salt / factor,
+  }
+}

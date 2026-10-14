@@ -27,7 +27,18 @@ export const recipeHandler = {
             id: nanoid(),
             name: '',
             ingredients: [],
-            description: ''
+            description: '',
+            foodItemId: '',
+            servings: 1,
+            totalMacros: {
+                fat: 0,
+                hardFat: 0,
+                carbs: 0,
+                sugar: 0,
+                protein: 0,
+                salt: 0,
+                kcal: 0,               
+            }
         })
     },
 
@@ -37,6 +48,10 @@ export const recipeHandler = {
 
     async getById(id: string): Promise<Recipe | undefined> {
         return loadRecipes().find((recipe) => recipe.id === id)
+    },
+
+    async getByFoodItemId(id: string): Promise<Recipe | undefined> {
+        return loadRecipes().find((recipe) => recipe.foodItemId === id)
     },
 
     async add(recipe: Recipe): Promise<void> {

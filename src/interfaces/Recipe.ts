@@ -1,13 +1,18 @@
-import type { Ingredient } from "./Ingredient"
+import type { Macros } from "./Nutrition"
 
 export interface RecipeIngredient {
-    ingredient: Ingredient
-    grams: number
+    foodItemId: string
+    amount: number
+    type: 'meal' | 'drink'
 }
 
 export interface Recipe {
     id: string
     name: string
     ingredients: RecipeIngredient[]
-    description?: string 
+    foodItemId: string
+    servings: number
+    description?: string
+    totalMacros: Macros
+
 }
